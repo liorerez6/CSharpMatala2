@@ -4,6 +4,14 @@ class Player
 {
     private int m_Score;
     private string m_Name;
+
+
+    public Player(string i_Name)
+    {
+        m_Name = i_Name;
+        m_Score = 0;
+    }
+
     public int Score
     {
         get { return m_Score; }
@@ -12,38 +20,9 @@ class Player
     public string Name
     {
         get { return m_Name; }
-        set
-        {
-            if (IsValidName(value))
-            {
-                m_Name = value;
-            }
-            else
-            {
-                //throw execption
-            }
-        }
-       
+        
     }
-    private bool IsValidName(string i_Name)
-    {
-        // Check if the i_Name contains only letters (A-Z and a-z)
-        // and is not empty or null
-        if (string.IsNullOrEmpty(i_Name))
-        {
-            return false;
-        }
-
-        foreach (char c in i_Name)
-        {
-            if (!char.IsLetter(c))
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
+   
     public void IncreaseScore()
     {
         m_Score++;

@@ -207,7 +207,8 @@ class Board
     public void ReveldCard(int row, int col)
     {
         Console.SetCursorPosition((col * 4) -1, row * 2 );
-        Console.Write(m_BoardState[row, col]);
+        Console.Write(m_BoardState[row-1, col-1]);
+        Console.SetCursorPosition(0,0);
     }
 
     public bool CheckIfSameCards(int row1, int col1, int row2, int col2)

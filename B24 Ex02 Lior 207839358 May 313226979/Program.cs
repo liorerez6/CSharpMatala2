@@ -1,4 +1,5 @@
 ﻿using System;
+using Ex02.ConsoleUtils;
 
 class Program
 {
@@ -6,10 +7,23 @@ class Program
     public static void Main()
     {
 
-
-        Board board = new Board(4, 5);
+        InputManager inputManger = new InputManager();
+        
+        Board board = inputManger.GetBoardDimentions();
+        Screen.Clear();
         board.DisplayBoard();
-        board.ReveldCard(3, 2);
+        (int row, int col) = inputManger.GetSlots();
+        board.ReveldCard(row, col);
+
+
+
+        Screen.Clear();
+        
+
+
+
+
+
     }
 
 }
