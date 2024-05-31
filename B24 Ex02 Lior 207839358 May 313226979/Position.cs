@@ -1,8 +1,12 @@
 ﻿
-class Position
+using System;
+
+struct Position
 {
     private int m_RowIndex;
     private int m_ColumnIndex;
+
+    
 
     public int Row
     {

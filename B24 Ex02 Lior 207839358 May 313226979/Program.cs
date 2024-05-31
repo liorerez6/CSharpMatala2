@@ -1,12 +1,15 @@
 ﻿using System;
 
-
 class Program
 {
 
     public static void Main()
     {
-        //Game.RunGame();
+
+
+        Board board = new Board(4, 5);
+        board.DisplayBoard();
+
     }
 
 }

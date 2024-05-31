@@ -23,7 +23,7 @@ class Player
                 //throw execption
             }
         }
-
+       
     }
     private bool IsValidName(string i_Name)
     {
@@ -44,9 +44,9 @@ class Player
 
         return true;
     }
-    public int IncreaseScore()
+    public void IncreaseScore()
     {
-        return m_Score + 1;
+        m_Score++;
     }
 
 }
