@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.PerformanceData;
-using System.Globalization;
-using System.Linq.Expressions;
 using System.Text;
 
 class Board
@@ -24,7 +21,6 @@ class Board
         InitilizeBoard();
 
     }
-
 
     private void InitilizeBoard()
     {
@@ -57,7 +53,6 @@ class Board
         }
     }
 
-
     private List<char> generatePairsOfLetters()
     {
 
@@ -77,7 +72,6 @@ class Board
 
         return listOfPairs;
     }
-
 
     private void ShuffleChars(List<char> i_ListOfChars)
     {
@@ -209,4 +203,38 @@ class Board
 
 
     }
+
+    public void ReveldCard(int row, int col)
+    {
+        Console.SetCursorPosition((col * 4) -1, row * 2 );
+        Console.Write(m_BoardState[row, col]);
+    }
+
+    public bool CheckIfSameCards(int row1, int col1, int row2, int col2)
+    {
+        return (m_BoardState[row1, col1] == m_BoardState[row2, col2]);
+    }
+
+    public void ChangeCardsStateOnBoard(int row1, int col1, int row2, int col2)
+    {
+        m_BoardReveals[row1, col1] = true;
+        m_BoardReveals[row2, col2] = true;
+    }
+
+    public bool IsBoardFull()
+    {
+        bool isBoardFull = true;
+
+        foreach (bool state in m_BoardReveals)
+        {
+            if (state == false)
+            {
+                isBoardFull = false;
+                break;
+            }
+        }
+
+        return isBoardFull;
+    }
+
 }

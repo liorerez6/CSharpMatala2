@@ -9,7 +9,7 @@ class Program
 
         Board board = new Board(4, 5);
         board.DisplayBoard();
-
+        board.ReveldCard(3, 2);
     }
 
 }
