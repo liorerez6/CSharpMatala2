@@ -1,13 +1,15 @@
 ﻿using System;
 
-
 class Program
 {
 
     public static void Main()
     {
-        //Game.RunGame();
-        //note
+
+
+        Board board = new Board(4, 5);
+        board.DisplayBoard();
+        board.ReveldCard(3, 2);
     }
 
 }
