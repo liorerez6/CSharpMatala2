@@ -24,7 +24,7 @@ struct Position
         }
     }
 
-    public int Collumn
+    public int Column
     {
         get { return m_ColumnIndex; }
         set

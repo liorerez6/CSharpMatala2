@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 
-//push check
+//check maybe use Card class instead of pair- row,col
+
 class Board
 {
     private int m_Rows;
@@ -13,7 +14,6 @@ class Board
 
     public Board(int i_Rows, int i_Cols)
     {
-
         m_Rows = i_Rows;
         m_Columns = i_Cols;
         m_BoardState = new char[i_Rows, i_Cols];
@@ -25,38 +25,28 @@ class Board
 
     private void InitilizeBoard()
     {
-
-
         m_Letters = generatePairsOfLetters();
-
         ShuffleChars(m_Letters);
-
         fillBoardInChar(m_Letters);
-
     }
 
     private void fillBoardInChar(List<char> i_ListOfChars)
     {
-
         int indexOfList = 0;
 
         for(int i = 0; i<m_Rows;i++)
         {
-
             for(int j = 0; j<m_Columns; j++)
             {
-
                 m_BoardState[i, j] = i_ListOfChars[indexOfList];
                 m_BoardReveals[i, j] = false;
                 indexOfList++;
-
             }
         }
     }
 
     private List<char> generatePairsOfLetters()
     {
-
         List<char> listOfPairs = new List<char>();
 
         int sizeOfPairs = (m_Columns * m_Rows) / 2;
@@ -64,11 +54,9 @@ class Board
  
         for (int i = 0; i < sizeOfPairs; i++)
         {
-
             listOfPairs.Add(letter);
             listOfPairs.Add(letter);
             letter++;
-
         }
 
         return listOfPairs;
@@ -76,10 +64,8 @@ class Board
 
     private void ShuffleChars(List<char> i_ListOfChars)
     {
-
         Random rng = new Random();
         int sizeOfList = i_ListOfChars.Count;
-
 
         while (sizeOfList > 1)
         {
@@ -93,10 +79,9 @@ class Board
 
     public void DisplayBoard()
     {
-
-
         StringBuilder sb = new StringBuilder();
         sb.Append("   ");
+
         char firstLetter = 'A';
 
         for (int i = 0; i < m_Columns; i++)
@@ -205,15 +190,22 @@ class Board
 
     }
 
-    public void ReveldCard(int row, int col)
+    public void RevealCard(int row, int col)
     {
         Console.SetCursorPosition((col * 4) -1, row * 2 );
-        Console.Write(m_BoardState[row, col]);
+        Console.Write(m_BoardState[row - 1, col - 1]);
+        //player see +1 row/col
+        //row 0 is 1 on board display on console, also col 'A' is col=0, not 1
     }
 
     public bool CheckIfSameCards(int row1, int col1, int row2, int col2)
     {
         return (m_BoardState[row1, col1] == m_BoardState[row2, col2]);
+    }
+
+    public bool CheckIfSameCards(Card i_card1, Card i_card2)
+    {
+        return (m_BoardState[i_card1.Row, i_card1.Col] == m_BoardState[i_card2.Row, i_card2.Col]);
     }
 
     public void ChangeCardsStateOnBoard(int row1, int col1, int row2, int col2)
@@ -238,4 +230,19 @@ class Board
         return isBoardFull;
     }
 
+    public bool CheckACardOnBoard(int row, int col)
+    {
+        bool invalidCardChoise = false;
+
+        //already revealed on board
+        if (m_BoardReveals[row, col] == true)
+        {
+            invalidCardChoise = true;    
+        }
+
+        //not in board range or a number
+        //else if (invalid input ... ) {
+
+        return invalidCardChoise; 
+    }
 }
