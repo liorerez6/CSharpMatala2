@@ -20,7 +20,6 @@ class Board
         m_BoardReveals = new bool[i_Rows, i_Cols];
 
         InitilizeBoard();
-
     }
 
     private void InitilizeBoard()
@@ -203,6 +202,7 @@ class Board
         return (m_BoardState[row1, col1] == m_BoardState[row2, col2]);
     }
 
+    //Overloading with Card class
     public bool CheckIfSameCards(Card i_card1, Card i_card2)
     {
         return (m_BoardState[i_card1.Row, i_card1.Col] == m_BoardState[i_card2.Row, i_card2.Col]);
@@ -234,14 +234,20 @@ class Board
     {
         bool invalidCardChoise = false;
 
+        //TO DO
+        //condotion 1:
+        //check input before trying to access on board
+        if (false)
+        {
+            //if not in board range- keep false
+        }
+        
+        //condition 2:
         //already revealed on board
-        if (m_BoardReveals[row, col] == true)
+        else if (m_BoardReveals[row, col] == true)
         {
             invalidCardChoise = true;    
         }
-
-        //not in board range or a number
-        //else if (invalid input ... ) {
 
         return invalidCardChoise; 
     }

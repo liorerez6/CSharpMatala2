@@ -4,17 +4,17 @@ using System.Text;
 
 public class RunGame
 {
-    private Player m_player1 = null;
-    private Player m_player2 = null;
-    private Board m_board = null;
+    private Player m_Player1 = null;
+    private Player m_Player2 = null;
+    private Board m_Board = null;
 
-    private bool m_isGameOver = false;
+    private bool m_IsGameOver = false;
 
     public RunGame()
     {
         DisplayMenu();
 
-        if(m_isGameOver == false)
+        if(m_IsGameOver == false)
         {
             InitilizeGameBoard();
             StartGame();
@@ -32,7 +32,7 @@ public class RunGame
         //winner annoncement
     }
 
-
+    //Get Board preference
     private void InitilizeGameBoard()
     {
         int row = 0;
@@ -46,8 +46,12 @@ public class RunGame
             col = System.Console.Read();
             //TO DO
             //check input
-            //isValidInput = 
+            //isValidInput = method - should also send an error message
+            isValidInput = true;    //temporary
+
         }
+
+        isValidInput = false;
 
         while (isValidInput == false)
         {
@@ -55,14 +59,16 @@ public class RunGame
             row = System.Console.Read();
             //TO DO
             //check input
-            //isValidInput = 
+            //isValidInput = method - should also send an error message
+            isValidInput = true;    //temporary
         }
 
-        m_board = new Board(row, col);
+        m_Board = new Board(row, col);
     }
 
     private void PrintMenu()
     {
+        //Maybe a text file instead of method
         //clear screen
 
         System.Console.WriteLine("Welcome to Memory Game");
@@ -81,23 +87,26 @@ public class RunGame
         while (isValidInput == false)
         {
             int press = System.Console.Read();
+
             //TO DO
-            //check input isValidInput = 
+            //check input isValidInput = method 
+            //temporary set->
+            isValidInput = true;
 
             switch (press)
             {
                 case 1:
-                    m_player1 = new Player();
-                    m_player2 = new Player();
+                    m_Player1 = new Player();
+                    m_Player2 = new Player();
                     break;
 
                 case 2:
-                    m_player1 = new Player();
-                    m_player2 = new Player("Computer");
+                    m_Player1 = new Player();
+                    m_Player2 = new Player("Computer");
                     break;
 
                 case 3:
-                    m_isGameOver = true;
+                    m_IsGameOver = true;
                     break;
             }
         }
@@ -108,25 +117,26 @@ public class RunGame
 
     private void StartGame()
     {
-        while(m_isGameOver ==  false)
+        while(m_IsGameOver ==  false)
         {
             bool sameCardsRevealed = false;
 
+            //TO DO
             //clear screen
-            m_board.DisplayBoard();
+            m_Board.DisplayBoard();
             
             //Player 1 cards choise:
             sameCardsRevealed = GetCardeFromPlayerAndCheckIfSimilar();
             if (sameCardsRevealed == true)
             {
-                m_player1.Score += 1;
+                m_Player1.Score += 1;
             }
 
             //Player 2 cards choise:
             sameCardsRevealed = GetCardeFromPlayerAndCheckIfSimilar();
             if (sameCardsRevealed == true)
             {
-                m_player1.Score += 1;
+                m_Player1.Score += 1;
             }
 
             //TO DO
@@ -139,43 +149,50 @@ public class RunGame
         //Display winner
     }
 
+    //Maybe move to Card class
     private bool GetCardeFromPlayerAndCheckIfSimilar()
     {
         Card firstCard = null;
         Card secondCard = null;
-        bool sameCardsRevealed = false;
+        bool sameCardsAreRevealed = false;
 
+        //TO DO
         //clear screen
-        m_board.DisplayBoard();
+        m_Board.DisplayBoard();
 
         //Player's cards choises:
         firstCard = GetOneCardFromPlayer();
         secondCard = GetOneCardFromPlayer();
 
-        sameCardsRevealed = m_board.CheckIfSameCards(firstCard, secondCard);
+        sameCardsAreRevealed = m_Board.CheckIfSameCards(firstCard, secondCard);
         
-        return sameCardsRevealed;
+        return sameCardsAreRevealed;
     }
 
+    //Maybe move to Card class
     private Card GetOneCardFromPlayer()
     {
         Card card = new Card();
         bool isValidInput = false;
+        bool isCardChoiseValid = false;
 
-        while (isValidInput == false)
+        while (isValidInput == false && isCardChoiseValid == false)
         {
             System.Console.WriteLine("Please choose a card by writing the numbers of it's row and column: ");
 
             card.Row = System.Console.Read();
             card.Col = System.Console.Read();
+            //TO DO
+            //check and convert input from player
+            //should be a letter and number
 
             //isValidInput = 
-            isValidInput = m_board.CheckACardOnBoard(card.Row, card.Col);
+            isCardChoiseValid = m_Board.CheckACardOnBoard(card.Row, card.Col);
 
             //check input, check if 'Q' for endGame, char??
             if (card.Row == 'Q' || card.Col == 'Q')
             {
-                m_isGameOver = true;
+                m_IsGameOver = true;
                 break;
             }
 
@@ -187,16 +204,16 @@ public class RunGame
 
         //TO DO
         //isValidInput == true
-        m_board.RevealCard(card.Row, card.Col);
+        m_Board.RevealCard(card.Row, card.Col);
 
         return card;
     }
 
     private void CheckIfGameIsOver()
     {
-        if (m_board.IsBoardFull() == true)
+        if (m_Board.IsBoardFull() == true)
         {
-            m_isGameOver = true;
+            m_IsGameOver = true;
         }
     }
 }

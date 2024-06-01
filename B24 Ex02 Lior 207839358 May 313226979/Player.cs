@@ -25,6 +25,8 @@ class Player
 
         while (validInput == false)
         {
+            //TO DO
+            //clear screen
             System.Console.WriteLine("Please type you name, using letters only: ");
             getPlayerName = System.Console.ReadLine();
             validInput = IsValidName(getPlayerName);
@@ -80,29 +82,29 @@ class Player
         m_Score++;
     }
 
-    public bool GetACardFromPlayer(ref int i_row, ref int i_col)
-    {
-        bool endGameInput = false;
-        bool isValidInput = false;
+    //public bool GetACardFromPlayer(ref int i_row, ref int i_col)
+    //{
+    //    bool endGameInput = false;
+    //    bool isValidInput = false;
 
-        while (isValidInput == false)
-        {
-            System.Console.WriteLine("Please type (row, column) of the card you want to reveal: ");
-            i_row = System.Console.Read();
-            i_col = System.Console.Read();
+    //    while (isValidInput == false)
+    //    {
+    //        System.Console.WriteLine("Please type (row, column) of the card you want to reveal: ");
+    //        i_row = System.Console.Read();
+    //        i_col = System.Console.Read();
 
-            //TO DO
-            //isValidInput = 
-            //check input, check if 'Q' for endGame, char??
-            if( i_row == 'Q' || i_col == 'Q')
-            {
-                endGameInput = true;
-                break;
-            }
+    //        //TO DO
+    //        //isValidInput = 
+    //        //check input, check if 'Q' for endGame, char??
+    //        if( i_row == 'Q' || i_col == 'Q')
+    //        {
+    //            endGameInput = true;
+    //            break;
+    //        }
 
-        }
+    //    }
 
-        return endGameInput;
-    }
+    //    return endGameInput;
+    //}
 
 }
