@@ -144,68 +144,13 @@ class Board
 
         Console.WriteLine(sb.ToString());
 
-
-
-
-        //    System.Console.Write("   ");
-        //    char firstLetter = 'A';
-
-        //    for (int i = 0; i<=m_Rows; i++)
-        //    {
-        //        System.Console.Write(firstLetter);
-        //        System.Console.Write("   ");
-        //        firstLetter++;
-        //    }
-
-        //    System.Console.Write("   \n");
-
-        //    for (int i = 0; i < m_Rows; i++)
-        //    {
-
-        //        System.Console.Write(" ");
-        //        for (int k = 0; k <= m_Rows * 5; k++)
-        //        {
-        //            System.Console.Write("=");
-        //        }
-        //        System.Console.Write("   \n");
-
-        //        System.Console.Write(i+1);
-
-        //        for (int j = 0; j<m_Columns; j++)
-        //        {
-        //            System.Console.Write("|");
-        //            if (m_BoardReveals[i,j] == true)
-        //            {
-        //                System.Console.Write(" ");
-        //                System.Console.Write(m_BoardState[i, j]);
-        //                System.Console.Write(" ");
-        //            }
-        //            else
-        //            {
-        //                System.Console.Write("   ");
-        //            }
-
-
-        //        }
-        //        System.Console.Write("|");
-        //        System.Console.Write("\n");
-
-        //    }
-
-        //    System.Console.Write(" ");
-        //    for (int k = 0; k <= m_Rows * 5; k++)
-        //    {
-        //        System.Console.Write("=");
-        //    }
-
-        //}
-
-
-
     }
 
     public void ReveldCard(int row, int col)
     {
+
+        // needs to check if its already occupied
+
         Console.SetCursorPosition((col * 4) -1, row * 2 );
         Console.Write(m_BoardState[row-1, col-1]);
         Console.SetCursorPosition(0,0);
