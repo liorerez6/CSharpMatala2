@@ -3,7 +3,7 @@
 class Player
 {
     private int m_Score;
-    private string m_Name;
+    private string m_Name; // should be readonly because it doesn't change during the game.
 
 
     public Player(string i_Name)
@@ -19,7 +19,8 @@ class Player
 
     public string Name
     {
-        get { return m_Name; }
+    
+        get { return m_Name; } // doesn't need set because gets the Name after checking from the input Manager
         
     }
    

@@ -2,6 +2,18 @@
 using System.Collections.Generic;
 
 
+
+/*
+ * needs here a lot of changes.
+inputManager should only check for vaild input but he doesnt responsible for knowing the dimentions of the board
+for example:
+
+inputManager should get input of (5,5) checks that it indead 2 integers.
+then inputManger asks the Logic if this input a vaild input. (in our case its Board Class)
+Board Class will response that its invaild input because its odd input(not even). then InputManger will print the right message.
+ * 
+ */
+
 class InputManager
 {
     private const bool v_TwoPlayersGame = true;
@@ -172,7 +184,7 @@ class InputManager
         return GetSlot(m_currentColDimention, "col");
     }
 
-    private int GetSlot(int dimension, string slotType)
+    private int GetSlot(int dimension, string slotType) 
     {
         while (v_GotCorrectInputFromUser)
         {
@@ -181,11 +193,11 @@ class InputManager
 
             if(input.Equals("Q"))
             {
-                EndGame(); // **exit the game
+                EndGameMessage(); // **exit the game // *edit* no need. just inform the big game loop that the game is finish. 
             }
             else
             {
-                if (int.TryParse(input, out int slot) && (slot >= 1 && slot <= dimension))
+                if (int.TryParse(input, out int slot) && (slot >= 1 && slot <= dimension))  // this related to the logic checks..
                 {
                     return slot;
                 }
@@ -203,7 +215,7 @@ class InputManager
         Console.WriteLine(message);
     }
 
-    private void EndGame()
+    private void EndGameMessage()
     {
         Console.WriteLine("Game ended by user.");
         Environment.Exit(0);
