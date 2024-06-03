@@ -20,7 +20,6 @@ class InputManager
 
         while (m_UserInerfaceIsOn)
         {
-            //Console.WriteLine("Welcome to memory game!\n");
             PrintMessage("Welcome to memory game!");
             SetupGame();
             PlayRounds();
