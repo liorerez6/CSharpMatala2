@@ -9,12 +9,16 @@ class InputManager
     private const bool v_TwoPlayersGame = true;
     private const bool v_PlayerVsComputerGame = false;
     private const bool v_GotCorrectInputFromUser = true;
+    private const int v_MaxDimention = 6;
+    private const int v_MinDimention = 4;
+
     private readonly ErrorHandling errorHandling = new ErrorHandling();
     private MemoryGameLogic m_memoryGameLogic = new MemoryGameLogic();
     private bool m_UserInerfaceIsOn = true;
 
-    private int m_FirstPickRowSlot, m_FirstPickColSlot, m_SecondPickRowSlot, m_SecondPickColSlot, m_RowDimention, m_ColDimention;
-
+    private int m_FirstPickRowSlot, m_FirstPickColSlot, m_SecondPickRowSlot,
+    m_SecondPickColSlot, m_RowDimention, m_ColDimention;
+    
     public void PlayGame()
     {
 
@@ -26,30 +30,18 @@ class InputManager
         }
 
     }
-
     private void SetupGame()
     {
-        bool gameMode;
-        string firstPlayerName, secondPlayerName;
-        int rowDimention, colDimention;
-
-        gameMode = GetGameMode();
-        m_memoryGameLogic.GetGameModeFromUser(gameMode);
+        
+        GetGameMode();
         Console.Clear();
 
-        (firstPlayerName, secondPlayerName) = GetPlayersNames();
-        m_memoryGameLogic.AddPlayersToGame(firstPlayerName, secondPlayerName);
+        GetPlayersNames();
         Console.Clear();
 
-        (rowDimention, colDimention) = GetBoardDimentions();
-        while (!m_memoryGameLogic.GetBoardDimentionsFromUser(rowDimention, colDimention))
-        {
-            (rowDimention, colDimention) = GetBoardDimentions();
-        }
-        m_RowDimention = rowDimention;
-        m_ColDimention = colDimention;
+        GetBoardDimentions();
+       
     }
-
     private void PlayRounds()
     {
         while (!m_memoryGameLogic.GameIsOver)
@@ -87,12 +79,10 @@ class InputManager
 
         int row, col;
         
-        //DisplayBoard(i_BoardCurrentState, i_BoardCurrentReveals);
-
-
-        (row, col) = GetSlots(i_RowDimention, i_ColDimention); // already checks the input according to game's dimentions.
-        while (!(m_memoryGameLogic.IsValidEmptySlot(row, col)))
+        (row, col) = GetSlots(i_RowDimention, i_ColDimention); // UI checks that its withing dimentions of the board
+        while (!(m_memoryGameLogic.IsValidEmptySlot(row, col))) // checks with the Logic if the slot is not taken already
         {
+            errorHandling.InvalidTakenSlotError();
             (row, col) = GetSlots(i_RowDimention, i_ColDimention);
         }
 
@@ -153,12 +143,13 @@ class InputManager
         Console.WriteLine(sb.ToString());
     }
 
-    public bool GetGameMode() // true means TwoPlayerGame, false PlayerVsComputer
+    public void GetGameMode() // true means TwoPlayerGame, false PlayerVsComputer
     {
 
-        Console.WriteLine("Enter 1 - Two players game");
-        Console.WriteLine("Enter 2 - Player vs Computer");
+        PrintMessage("Enter 1 - Two players game");
+        PrintMessage("Enter 2 - Player vs Computer");
 
+        bool gameMode;
         string userModeChoice;
 
         do
@@ -166,16 +157,25 @@ class InputManager
             userModeChoice = Console.ReadLine();
             if (!userModeChoice.Equals("1") && !userModeChoice.Equals("2"))
             {
-                Console.WriteLine("Input should be only 1 or 2");
+                errorHandling.InvalidGameModeError();
             }
 
         } while (!userModeChoice.Equals("1") && !userModeChoice.Equals("2"));
 
-        return userModeChoice == "1" ? v_TwoPlayersGame : v_PlayerVsComputerGame;
+        if(userModeChoice.Equals("1"))
+        {
+            gameMode = v_TwoPlayersGame;
+        }
+        else
+        {
+            gameMode = v_PlayerVsComputerGame;
+        }
+
+        m_memoryGameLogic.GetGameModeFromUser(gameMode);      
 
     } 
 
-    public (string, string) GetPlayersNames()
+    public void GetPlayersNames()
     {
         List<Player> players = new List<Player>();
 
@@ -184,19 +184,18 @@ class InputManager
 
         firstPlayerName = GetPlayerName("Enter first player's name: ");
 
-        //players.Add(new Player(firstPlayerName));
-
         if (v_TwoPlayersGame) // meaing playing agaist another player 
         {
             secondPlayerName = GetPlayerName("Enter second player's name: ");
-            //players.Add(new Player(secondPlayerName));
         }
         else
         {
             secondPlayerName = "Computer";
         }
 
-        return (firstPlayerName, secondPlayerName);
+        m_memoryGameLogic.AddPlayersToGame(firstPlayerName, secondPlayerName);
+
+        //return (firstPlayerName, secondPlayerName);
     }
 
     private string GetPlayerName(string i_Message)
@@ -208,7 +207,7 @@ class InputManager
             playerName = Console.ReadLine();
             if (!IsValidName(playerName))
             {
-                Console.WriteLine("Name should contain only a-Z");
+                errorHandling.InvalidNameError();
             }
 
         } while (!IsValidName(playerName));
@@ -236,7 +235,7 @@ class InputManager
         return true;
     }
 
-    public (int,int) GetBoardDimentions()
+    public void GetBoardDimentions()
     {
         int currentRowDimention;
         int currentColDimention;
@@ -244,12 +243,22 @@ class InputManager
 
 
         currentRowDimention = GetBoardRows();
-
         rowNumberIsOdd = currentRowDimention % 2 != 0;
-
         currentColDimention = GetBoardCols(rowNumberIsOdd);
 
-        return (currentRowDimention, currentColDimention);
+        while (!m_memoryGameLogic.GetBoardDimentionsFromUser(currentRowDimention, currentColDimention))
+        {
+            errorHandling.InvalidOddColsError();
+
+            currentRowDimention = GetBoardRows();
+            rowNumberIsOdd = currentRowDimention % 2 != 0;
+            currentColDimention = GetBoardCols(rowNumberIsOdd);
+        }
+
+        m_RowDimention = currentRowDimention;
+        m_ColDimention = currentColDimention;
+
+        //return (currentRowDimention, currentColDimention);
 
     }
 
@@ -262,16 +271,20 @@ class InputManager
 
             if (int.TryParse(input, out int rows))  // now only checks if int
             {
-                return rows;
+                if(rows >= v_MinDimention && rows <= v_MaxDimention)
+                {
+                    
+                    return rows;
+                }
+                else
+                {
+                    errorHandling.InvalidRowDimensionError();
+                }
             }
-
-            //if (int.TryParse(input, out int rows) && (rows >= v_MinDimention && rows <= v_MaxDimention))
-            //{
-            //    return rows;
-            //}
 
             else
             {
+
                 errorHandling.InvalidRowDimensionError();
             }
         }
@@ -289,7 +302,15 @@ class InputManager
 
             if (int.TryParse(input, out int cols))
             {
-                return cols;
+                if (cols >= v_MinDimention && cols <= v_MaxDimention)
+                {
+                    
+                    return cols;
+                }
+                else
+                {
+                    errorHandling.InvalidColsDimensionError();
+                }
             }
 
             else

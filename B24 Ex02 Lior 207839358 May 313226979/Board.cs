@@ -10,9 +10,6 @@ class Board
     private bool[,] m_BoardReveals;
     private List<char> m_Letters;
 
-    private const int v_MinDimention = 4;
-    private const int v_MaxDimention = 6;
-
     public Board(int i_Rows, int i_Cols)
     {
 
@@ -51,22 +48,12 @@ class Board
     {
 
         bool validBoardDimention = true;
-        if (!(i_Rows >= v_MinDimention && i_Rows <= v_MaxDimention))
+
+        bool rowNumberIsOdd = (i_Rows % 2 == 1);
+
+        if ((i_Cols % 2 == 1) && (rowNumberIsOdd == true))
         {
             validBoardDimention = false;
-        }
-
-        else
-        {
-            bool rowNumberIsOdd = (i_Rows % 2 == 1);
-
-            if ((i_Cols >= v_MinDimention && i_Cols <= v_MaxDimention))
-            {
-                if ((i_Cols % 2 == 1) && (rowNumberIsOdd == true))
-                {
-                    validBoardDimention = false;
-                }
-            }
         }
 
         return validBoardDimention; // needs to explain each error of input (maybe enum)
