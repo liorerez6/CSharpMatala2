@@ -4,19 +4,6 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 
-
-
-/*
- * needs here a lot of changes.
-inputManager should only check for vaild input but he doesnt responsible for knowing the dimentions of the board
-for example:
-
-inputManager should get input of (5,5) checks that it indead 2 integers.
-then inputManger asks the Logic if this input a vaild input. (in our case its Board Class)
-Board Class will response that its invaild input because its odd input(not even). then InputManger will print the right message.
- * 
- */
-
 class InputManager
 {
     private const bool v_TwoPlayersGame = true;
@@ -33,8 +20,8 @@ class InputManager
 
         while (m_UserInerfaceIsOn)
         {
-            Console.WriteLine("Welcome to memory game!\n");
-
+            //Console.WriteLine("Welcome to memory game!\n");
+            PrintMessage("Welcome to memory game!");
             SetupGame();
             PlayRounds();
         }
@@ -49,9 +36,11 @@ class InputManager
 
         gameMode = GetGameMode();
         m_memoryGameLogic.GetGameModeFromUser(gameMode);
+        Console.Clear();
 
         (firstPlayerName, secondPlayerName) = GetPlayersNames();
         m_memoryGameLogic.AddPlayersToGame(firstPlayerName, secondPlayerName);
+        Console.Clear();
 
         (rowDimention, colDimention) = GetBoardDimentions();
         while (!m_memoryGameLogic.GetBoardDimentionsFromUser(rowDimention, colDimention))
@@ -61,8 +50,6 @@ class InputManager
         m_RowDimention = rowDimention;
         m_ColDimention = colDimention;
     }
-
-
 
     private void PlayRounds()
     {
