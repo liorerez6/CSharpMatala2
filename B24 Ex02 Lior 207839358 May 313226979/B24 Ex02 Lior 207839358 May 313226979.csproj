@@ -39,6 +39,7 @@
     <Compile Include="Board.cs" />
     <Compile Include="ErrorHandling.cs" />
     <Compile Include="InputManager.cs" />
+    <Compile Include="MemoryGameLogic.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Position.cs" />
     <Compile Include="Program.cs" />

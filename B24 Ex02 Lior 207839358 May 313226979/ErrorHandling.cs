@@ -13,12 +13,12 @@ class ErrorHandling
 
     public void InvalidRowDimensionError()
     {
-        Console.WriteLine("Error: Invalid number of rows. Please enter 4 - 6.");
+        Console.WriteLine("Error: Invalid number of rows.");
     }
 
     public void InvalidColsDimensionError()
     {
-        Console.WriteLine("Error: Invalid number of cols. Please enter 4 - 6.");
+        Console.WriteLine("Error: Invalid number of cols.");
     }
 
     public void InvalidOddColsError()

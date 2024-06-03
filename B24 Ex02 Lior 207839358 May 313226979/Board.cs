@@ -10,6 +10,9 @@ class Board
     private bool[,] m_BoardReveals;
     private List<char> m_Letters;
 
+    private const int v_MinDimention = 4;
+    private const int v_MaxDimention = 6;
+
     public Board(int i_Rows, int i_Cols)
     {
 
@@ -20,6 +23,53 @@ class Board
 
         InitilizeBoard();
 
+    }
+
+    public int Row
+    {
+        get { return m_Rows; }
+    }
+
+    public int Col
+    {
+        get { return m_Columns; }
+    }
+
+    // this way, outside methods cannot change the board state
+    public char[,] GetBoardState()
+    {
+        return (char[,])m_BoardState.Clone();
+    }
+
+    public bool[,] GetBoardReveals()
+    {
+        return (bool[,])m_BoardReveals.Clone();
+    }
+
+
+    public static bool CheckIfCanCreateBoardWithDimentions(int i_Rows, int i_Cols)
+    {
+
+        bool validBoardDimention = true;
+        if (!(i_Rows >= v_MinDimention && i_Rows <= v_MaxDimention))
+        {
+            validBoardDimention = false;
+        }
+
+        else
+        {
+            bool rowNumberIsOdd = (i_Rows % 2 == 1);
+
+            if ((i_Cols >= v_MinDimention && i_Cols <= v_MaxDimention))
+            {
+                if ((i_Cols % 2 == 1) && (rowNumberIsOdd == true))
+                {
+                    validBoardDimention = false;
+                }
+            }
+        }
+
+        return validBoardDimention; // needs to explain each error of input (maybe enum)
     }
 
     private void InitilizeBoard()
@@ -90,65 +140,8 @@ class Board
         }
     }
 
-    public void DisplayBoard()
-    {
-
-
-        StringBuilder sb = new StringBuilder();
-        sb.Append("   ");
-        char firstLetter = 'A';
-
-        for (int i = 0; i < m_Columns; i++)
-        {
-            sb.Append(firstLetter);
-            sb.Append("   ");
-            firstLetter++;
-        }
-
-        sb.AppendLine();
-
-        for (int i = 0; i < m_Rows; i++)
-        {
-            sb.Append(" ");
-            for (int k = 0; k <= m_Columns * 4; k++)
-            {
-                sb.Append("=");
-            }
-            sb.AppendLine();
-
-            sb.Append(i + 1);
-
-            for (int j = 0; j < m_Columns; j++)
-            {
-                sb.Append("|");
-                if (m_BoardReveals[i, j])
-                {
-                    sb.Append(" ");
-                    sb.Append(m_BoardState[i, j]);
-                    sb.Append(" ");
-                }
-                else
-                {
-                    sb.Append("   ");
-                }
-            }
-            sb.Append("|");
-            sb.AppendLine();
-        }
-
-        sb.Append(" ");
-        for (int k = 0; k <= m_Columns * 4; k++)
-        {
-            sb.Append("=");
-        }
-
-        Console.WriteLine(sb.ToString());
-
-    }
-
     public void ReveldCard(int row, int col)
     {
-
         // needs to check if its already occupied
 
         Console.SetCursorPosition((col * 4) -1, row * 2 );
@@ -158,13 +151,31 @@ class Board
 
     public bool CheckIfSameCards(int row1, int col1, int row2, int col2)
     {
-        return (m_BoardState[row1, col1] == m_BoardState[row2, col2]);
+        return (m_BoardState[row1-1, col1 - 1] == m_BoardState[row2-1, col2 - 1]);
+    }
+
+    public bool CheckIfEmptySlot(int i_SlotRow, int i_SlotCol)
+    {
+
+        return (m_BoardReveals[i_SlotRow-1, i_SlotCol-1] == false) ? true : false;
+    }
+
+    public void FlipCardStateOnBoard(int i_Row, int i_Col)
+    {
+        if(m_BoardReveals[i_Row-1, i_Col-1] == true)
+        {
+            m_BoardReveals[i_Row-1, i_Col-1] = false;
+        }
+        else
+        {
+            m_BoardReveals[i_Row-1, i_Col-1] = true;
+        }
     }
 
     public void ChangeCardsStateOnBoard(int row1, int col1, int row2, int col2)
     {
-        m_BoardReveals[row1, col1] = true;
-        m_BoardReveals[row2, col2] = true;
+        m_BoardReveals[row1-1, col1-1] = true;
+        m_BoardReveals[row2-1, col2-1] = true;
     }
 
     public bool IsBoardFull()
