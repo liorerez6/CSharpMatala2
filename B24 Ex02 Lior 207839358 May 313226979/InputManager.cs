@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 
 
 
@@ -24,6 +25,18 @@ class InputManager
     private const int v_MaxDimention = 6;
     private int m_currentRowDimention;
     private int m_currentColDimention;
+
+
+
+    public void PlayGame()
+    {
+        Console.WriteLine("Welcome to memory game!\n");
+       
+        GetGameMode();
+        GetPlayersNames();
+
+
+    }
 
     public bool GetGameMode()
     {
