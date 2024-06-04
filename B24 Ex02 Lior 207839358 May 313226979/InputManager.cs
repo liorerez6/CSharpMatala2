@@ -46,12 +46,20 @@ class InputManager
     {
         while (!m_memoryGameLogic.GameIsOver)
         {
+
+            // if (GetPlayersTurn == "Computer")
+                 // going to be HumanTurn
+            // else
+                // Computer Turn
+
             updateGameScreen();
 
+            // first pick
             (m_FirstPickRowSlot, m_FirstPickColSlot) = GetVaildSlotFromUser(m_RowDimention, m_ColDimention);
             m_memoryGameLogic.FlipChosenCard(m_FirstPickRowSlot, m_FirstPickColSlot);
             updateGameScreen();
 
+            // second pick
             (m_SecondPickRowSlot, m_SecondPickColSlot) = GetVaildSlotFromUser(m_RowDimention, m_ColDimention);
             m_memoryGameLogic.FlipChosenCard(m_SecondPickRowSlot, m_SecondPickColSlot);
             updateGameScreen();
@@ -86,6 +94,7 @@ class InputManager
             (row, col) = GetSlots(i_RowDimention, i_ColDimention);
         }
 
+        
 
         return (row, col);
 

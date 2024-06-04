@@ -26,16 +26,8 @@ public class MemoryGameLogic
 
     public void GetGameModeFromUser(bool i_GameMode)
     {
-        if(i_GameMode == true)
-        {
-            m_IsPlayerVsPlayerGame = true;
-            m_IsComputerPlayerGame = false;
-        }
-        else
-        {
-            m_IsPlayerVsPlayerGame = false;
-            m_IsComputerPlayerGame= true;
-        }
+            m_IsPlayerVsPlayerGame = i_GameMode;
+            m_IsComputerPlayerGame = !i_GameMode;
     }
 
     public string GetPlayersTurn()
@@ -119,6 +111,8 @@ public class MemoryGameLogic
             m_NumberOfTurns++;
         }
         
+        // computer here needs to remember the cards of the player
+
     }
   
     public char[,] GetBoardState()
