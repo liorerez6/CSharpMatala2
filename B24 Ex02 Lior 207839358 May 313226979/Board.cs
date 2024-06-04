@@ -43,15 +43,24 @@ class Board
         return (bool[,])m_BoardReveals.Clone();
     }
 
+    //public char GetCharFromIndexInBoard(int i_Row, int i_Col)
+    //{
+    //    return (char)m_BoardState[i_Row, i_Col];
+    //}
+    public char GetCharFromIndexInBoard(Card i_Card)
+    {
 
-    public static bool CheckIfCanCreateBoardWithDimentions(int i_Rows, int i_Cols)
+        return (char)m_BoardState[i_Card.Row, i_Card.Col];
+    }
+
+    public static bool CheckIfCanCreateBoardWithDimentions(Card i_Card)
     {
 
         bool validBoardDimention = true;
 
-        bool rowNumberIsOdd = (i_Rows % 2 == 1);
+        bool rowNumberIsOdd = (i_Card.Row % 2 == 1);
 
-        if ((i_Cols % 2 == 1) && (rowNumberIsOdd == true))
+        if ((i_Card.Col % 2 == 1) && (rowNumberIsOdd == true))
         {
             validBoardDimention = false;
         }
@@ -59,9 +68,23 @@ class Board
         return validBoardDimention; // needs to explain each error of input (maybe enum)
     }
 
+    //public static bool CheckIfCanCreateBoardWithDimentions(int i_Rows, int i_Cols)
+    //{
+
+    //    bool validBoardDimention = true;
+
+    //    bool rowNumberIsOdd = (i_Rows % 2 == 1);
+
+    //    if ((i_Cols % 2 == 1) && (rowNumberIsOdd == true))
+    //    {
+    //        validBoardDimention = false;
+    //    }
+
+    //    return validBoardDimention; // needs to explain each error of input (maybe enum)
+    //}
+
     private void InitilizeBoard()
     {
-
 
         m_Letters = generatePairsOfLetters();
 
@@ -127,24 +150,65 @@ class Board
         }
     }
 
-    public void ReveldCard(int row, int col)
+    //public void ReveldCard(int row, int col)
+    //{
+    //    // needs to check if its already occupied
+
+    //    Console.SetCursorPosition((col * 4) -1, row * 2 );
+    //    Console.Write(m_BoardState[row-1, col-1]);
+    //    Console.SetCursorPosition(0,0);
+    //}
+
+    public void ReveldCard(Card i_Card)
     {
         // needs to check if its already occupied
 
-        Console.SetCursorPosition((col * 4) -1, row * 2 );
-        Console.Write(m_BoardState[row-1, col-1]);
-        Console.SetCursorPosition(0,0);
+        Console.SetCursorPosition((i_Card.Col * 4) - 1, i_Card.Row * 2);
+        Console.Write(m_BoardState[i_Card.Row - 1, i_Card.Col - 1]);
+        Console.SetCursorPosition(0, 0);
     }
+
 
     public bool CheckIfSameCards(int row1, int col1, int row2, int col2)
     {
         return (m_BoardState[row1-1, col1 - 1] == m_BoardState[row2-1, col2 - 1]);
     }
 
+    public bool CheckIfSameCards(Card i_Card1, Card i_Card2)
+    {
+        return (m_BoardState[row1 - 1, col1 - 1] == m_BoardState[row2 - 1, col2 - 1]);
+    }
+
     public bool CheckIfEmptySlot(int i_SlotRow, int i_SlotCol)
     {
 
         return (m_BoardReveals[i_SlotRow-1, i_SlotCol-1] == false) ? true : false;
+    }
+
+    public Card FindAHiddenCardInBoard(Player i_ComputerPlayer)
+    {
+        Card card = null;
+        bool keepSearching = true;
+
+        for(int i=0; i< m_Rows && keepSearching; i++)
+        {
+            for(int j=0; j< m_Columns && keepSearching; j++)
+            {
+                if (m_BoardReveals[i ,j] == false)
+                {
+                    card = new Card(i+1, j+1);
+                    char charOfCard = m_BoardState[i, j];
+
+                    //not in memory
+                    if (!i_ComputerPlayer.IsCardInMemoryRevealedCards(card, charOfCard)) 
+                    {
+                        keepSearching = false;
+                    }
+                }
+            }
+        }
+
+        return card;
     }
 
     public void FlipCardStateOnBoard(int i_Row, int i_Col)

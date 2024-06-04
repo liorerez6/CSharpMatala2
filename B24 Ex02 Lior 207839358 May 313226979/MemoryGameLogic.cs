@@ -7,9 +7,10 @@ public class MemoryGameLogic
     private List<Player> m_Players;
     private Board m_Board;
     bool m_IsComputerPlayerGame;
-    bool m_IsPlayerVsPlayerGame;
     private int m_NumberOfTurns;
     bool m_GameIsOver;
+
+
 
     public MemoryGameLogic()
     {
@@ -26,8 +27,12 @@ public class MemoryGameLogic
 
     public void GetGameModeFromUser(bool i_GameMode)
     {
-            m_IsPlayerVsPlayerGame = i_GameMode;
             m_IsComputerPlayerGame = !i_GameMode;
+    }
+
+    public bool IsComputerVsPlayerGame
+    {
+        get { return m_IsComputerPlayerGame; }
     }
 
     public string GetPlayersTurn()
@@ -91,10 +96,53 @@ public class MemoryGameLogic
     public void FlipChosenCard(int i_Row, int i_Col)
     {
         m_Board.FlipCardStateOnBoard(i_Row, i_Col);
+
+
+
     }
 
-    public void CheckForMatchAndUpdateAccordinly(int i_FirstPickRowSlot, int i_FirstPickColSlot, int i_SecondPickRowSlot, int i_SecondPickColSlot)
+    public (Card, Card) CheckForMatchedCardsInMemoryList()
     {
+        return m_Players[1].CheckForMatchedCardsInMemoryList();
+    }
+
+    public Card GetRandomCardFromComputer()
+    {
+        return m_Board.FindAHiddenCardInBoard(m_Players[1]);
+
+    }
+
+    public Card FindMattchingCard(Card i_SearchForCard) 
+    {        
+        char key = m_Board.GetCharFromIndexInBoard(i_SearchForCard.Row, i_SearchForCard.Col);
+
+        return m_Players[1].SearchForAMattchingCard(key);
+ 
+    }
+
+    
+    public void UpdateCardInComputerData(Card i_FirstCard, Card i_SecondCard) {
+        char firstCard = m_Board.GetCharFromIndexInBoard(i_FirstCard);
+        char secondCard = m_Board.GetCharFromIndexInBoard(i_SecondCard);
+
+        m_Players[1].UpdateCardInDictonary(i_FirstCard, i_SecondCard);
+    }
+
+
+    //public void UpdateCardInComputerData(int i_FirstRowCard, int i_FirstColCard, int i_SecondRowCard, int i_SecondColCard)
+    //{
+    //    char firstCard = m_Board.GetCharFromIndexInBoard(i_FirstRowCard, i_FirstColCard);
+    //    char secondCard = m_Board.GetCharFromIndexInBoard(i_SecondRowCard, i_SecondColCard);
+
+    //    m_Players[1].UpdateCardInDictonary(i_FirstRowCard, i_FirstColCard, i_SecondRowCard, i_SecondColCard, firstCard, secondCard);
+    //}
+
+
+    public bool CheckForMatchAndUpdateAccordinly(int i_FirstPickRowSlot, int i_FirstPickColSlot, int i_SecondPickRowSlot, int i_SecondPickColSlot)
+    {
+        bool cardsAreMatched = true;
+
+
         if(m_Board.CheckIfSameCards(i_FirstPickRowSlot, i_FirstPickColSlot, i_SecondPickRowSlot, i_SecondPickColSlot))
         {
             m_Board.ChangeCardsStateOnBoard(i_FirstPickRowSlot, i_FirstPickColSlot, i_SecondPickRowSlot, i_SecondPickColSlot);
@@ -109,9 +157,14 @@ public class MemoryGameLogic
             FlipChosenCard(i_FirstPickRowSlot, i_FirstPickColSlot);
             FlipChosenCard(i_SecondPickRowSlot, i_SecondPickColSlot);
             m_NumberOfTurns++;
+            cardsAreMatched = false;
+
+
         }
-        
-        // computer here needs to remember the cards of the player
+
+
+        return cardsAreMatched;
+       
 
     }
   
