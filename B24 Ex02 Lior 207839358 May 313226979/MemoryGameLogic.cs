@@ -81,28 +81,33 @@ public class MemoryGameLogic
     }
 
     public bool IsGameOver() // here need to check with Board if Game is over
-    {
-       
-        return m_Board.IsBoardFull() ? true : false;
+    {  
+        return m_Board.IsBoardFull();
     }
 
 
-    public bool IsValidEmptySlot(int i_SlotRow, int i_SlotCol)
+    public bool IsValidEmptySlot(Card i_Card)
     {
-
-        return (m_Board.CheckIfEmptySlot(i_SlotRow, i_SlotCol)) ? true : false;
+        return (m_Board.CheckIfEmptySlot(i_Card));
     }
 
-    public void FlipChosenCard(int i_Row, int i_Col)
+    public void FlipChosenCard(Card i_Card, bool i_Reveal)
     {
-        m_Board.FlipCardStateOnBoard(i_Row, i_Col);
-
-
-
+        if (i_Reveal)
+        {
+            m_Board.RevealedCard(i_Card);
+        }
+        else
+        {
+            m_Board.HideCard(i_Card);
+        }
     }
+
+
 
     public (Card, Card) CheckForMatchedCardsInMemoryList()
     {
+
         return m_Players[1].CheckForMatchedCardsInMemoryList();
     }
 
@@ -113,19 +118,23 @@ public class MemoryGameLogic
     }
 
     public Card FindMattchingCard(Card i_SearchForCard) 
-    {        
-        char key = m_Board.GetCharFromIndexInBoard(i_SearchForCard.Row, i_SearchForCard.Col);
+    {
 
-        return m_Players[1].SearchForAMattchingCard(key);
+        Card matchingCard = null;
+        char key = m_Board.GetCharFromIndexInBoard(i_SearchForCard);
+
+
+        matchingCard = m_Players[1].SearchForAMatchingCard(key);
+        return m_Players[1].SearchForAMatchingCard(key);
  
     }
 
     
     public void UpdateCardInComputerData(Card i_FirstCard, Card i_SecondCard) {
-        char firstCard = m_Board.GetCharFromIndexInBoard(i_FirstCard);
-        char secondCard = m_Board.GetCharFromIndexInBoard(i_SecondCard);
+        char charOfFirstCard = m_Board.GetCharFromIndexInBoard(i_FirstCard);
+        char charOfSecondCard = m_Board.GetCharFromIndexInBoard(i_SecondCard);
 
-        m_Players[1].UpdateCardInDictonary(i_FirstCard, i_SecondCard);
+        m_Players[1].UpdateCardsInDictionary(i_FirstCard, i_SecondCard, charOfFirstCard, charOfSecondCard);
     }
 
 
@@ -137,35 +146,45 @@ public class MemoryGameLogic
     //    m_Players[1].UpdateCardInDictonary(i_FirstRowCard, i_FirstColCard, i_SecondRowCard, i_SecondColCard, firstCard, secondCard);
     //}
 
+    public void DeleteCardsFromComputerData(Card i_Card)
+    {
+        m_Players[1].DeleteKeyFromData(m_Board.GetCharFromIndexInBoard(i_Card));
+    }
 
-    public bool CheckForMatchAndUpdateAccordinly(int i_FirstPickRowSlot, int i_FirstPickColSlot, int i_SecondPickRowSlot, int i_SecondPickColSlot)
+
+    public bool CheckForMatchAndUpdateAccordinly(Card i_FisrtCard, Card i_SecondCard)
     {
         bool cardsAreMatched = true;
 
-
-        if(m_Board.CheckIfSameCards(i_FirstPickRowSlot, i_FirstPickColSlot, i_SecondPickRowSlot, i_SecondPickColSlot))
+        if(m_Board.CheckIfSameCards(i_FisrtCard, i_SecondCard))
         {
-            m_Board.ChangeCardsStateOnBoard(i_FirstPickRowSlot, i_FirstPickColSlot, i_SecondPickRowSlot, i_SecondPickColSlot);
+            m_Board.RevealedCard(i_FisrtCard);
+            m_Board.RevealedCard(i_SecondCard);
+
+            if (m_Players[1].HumanIsPlaying == false)
+            {
+                m_Players[1].DeleteKeyFromData(m_Board.GetCharFromIndexInBoard(i_FisrtCard));
+            }
+            
+
+
+            // m_Board.ChangeCardsStateOnBoard(i_FisrtCard, i_SecondCard);
             m_Players[m_NumberOfTurns % 2].IncreaseScore();
             if(IsGameOver())
             {
                 m_GameIsOver = true;
             }
         }
+
         else
         {
-            FlipChosenCard(i_FirstPickRowSlot, i_FirstPickColSlot);
-            FlipChosenCard(i_SecondPickRowSlot, i_SecondPickColSlot);
+            m_Board.HideCard(i_FisrtCard);
+            m_Board.HideCard(i_SecondCard);
             m_NumberOfTurns++;
             cardsAreMatched = false;
-
-
         }
 
-
         return cardsAreMatched;
-       
-
     }
   
     public char[,] GetBoardState()

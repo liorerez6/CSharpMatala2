@@ -27,5 +27,9 @@ public class Card
         get { return m_Col; }
     }
 
+    public bool AreCardEquals(Card i_checkcard)
+    {
+        return (i_checkcard.Col == m_Col && i_checkcard.Row == m_Row);
+    }
 }
 

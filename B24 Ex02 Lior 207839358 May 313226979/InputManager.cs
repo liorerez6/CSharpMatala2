@@ -6,27 +6,34 @@ using System.Text;
 
 class InputManager
 {
-    private const bool v_TwoPlayersGame = true;
-    private const bool v_PlayerVsComputerGame = false;
+    //private const bool v_TwoPlayersGame = true;
+    //private const bool v_PlayerVsComputerGame = false;
     private const bool v_GotCorrectInputFromUser = true;
     private const int v_MaxDimention = 6;
     private const int v_MinDimention = 4;
+
+    private const string m_TwoPlayersChoice = "1";
+    private const string m_PlayerVsComputerChoice = "2";
 
     private readonly ErrorHandling errorHandling = new ErrorHandling();
     private MemoryGameLogic m_memoryGameLogic = new MemoryGameLogic();
     private bool m_UserInerfaceIsOn = true;
 
-    private int m_FirstPickRowSlot, m_FirstPickColSlot, m_SecondPickRowSlot,
-    m_SecondPickColSlot, m_RowDimention, m_ColDimention;
+    private Card m_FirstCard, m_SecondCard;
+    private int m_RowDimention, m_ColDimention;
     
     public void PlayGame()
     {
 
+        PrintMessage("Welcome to memory game!");
+        SetupGame();
+
         while (m_UserInerfaceIsOn)
         {
-            PrintMessage("Welcome to memory game!");
-            SetupGame();
+            
             PlayRounds();
+            // ask user for reGame
+
         }
 
     }
@@ -40,12 +47,14 @@ class InputManager
         GetPlayersNames();
         Console.Clear();
 
-        GetBoardDimentions();
+        //GetBoardDimentions();
        
     }
     
     private void PlayRounds()
     {
+        GetBoardDimentions();
+
         while (!m_memoryGameLogic.GameIsOver)
         {
             updateGameScreen();
@@ -63,68 +72,138 @@ class InputManager
             System.Threading.Thread.Sleep(2000);
             Screen.Clear();
         }
+
+        
     }
+
+    //private void playComputerTurn()
+    //{
+    //    bool cardsAreMatched;
+    //    //check if there is a liast with 2 cards --> true: reveald them
+    //    (Card card1, Card card2) = (m_memoryGameLogic.CheckForMatchedCardsInMemoryList());
+
+    //    //if both are not null values
+    //    if(card1 != card2)    // here are match
+    //    {
+    //        m_memoryGameLogic.FlipChosenCard(card1);
+    //        updateGameScreen();
+    //        m_memoryGameLogic.FlipChosenCard(card2);
+    //        updateGameScreen();
+    //        m_memoryGameLogic.CheckForMatchAndUpdateAccordinly(card1, card2);
+    //    }
+
+    //    else
+    //    {
+    //        card1 = m_memoryGameLogic.GetRandomCardFromComputer();
+    //        m_memoryGameLogic.FlipChosenCard(card1);
+    //        updateGameScreen();
+
+    //        card2 = m_memoryGameLogic.FindMattchingCard(card1);
+
+    //        if(card2 == null) // meaning here there is a match
+    //        {
+
+    //            card2 = m_memoryGameLogic.GetRandomCardFromComputer();
+    //            //m_memoryGameLogic.FlipChosenCard(card2);
+    //            //updateGameScreen();
+
+    //            // m_memoryGameLogic.CheckForMatchAndUpdateAccordinly(card1, card2);
+    //        }
+    //        //else
+    //        //{
+                
+                
+    //        //    //m_memoryGameLogic.FlipChosenCard(card2);
+    //        //    //updateGameScreen();
+    //        //}
+
+    //        m_memoryGameLogic.FlipChosenCard(card2);
+    //        updateGameScreen();
+    //        cardsAreMatched = m_memoryGameLogic.CheckForMatchAndUpdateAccordinly(card1, card2);
+
+    //        if(cardsAreMatched == false)
+    //        {
+    //            m_memoryGameLogic.UpdateCardInComputerData(card1, card2);
+    //        }
+
+    //    }
+
+    //}
 
     private void playComputerTurn()
     {
+        bool cardsAreMatched;
 
         //check if there is a liast with 2 cards --> true: reveald them
         (Card card1, Card card2) = (m_memoryGameLogic.CheckForMatchedCardsInMemoryList());
-
-        //if both are not null values
-        if(card1 != card2)
+        
+        if(card1 == null)
         {
-          //change to Card types
-          //m_memoryGameLogic.CheckForMatchAndUpdateAccordinly);
+            card1 = m_memoryGameLogic.GetRandomCardFromComputer();
         }
 
-        else
+        m_memoryGameLogic.FlipChosenCard(card1, true);
+
+        //if both are not null values
+        if (card2 == null)    // here are match
         {
-            //reveal random that is not in memory - key
-            card1 = m_memoryGameLogic.GetRandomCardFromComputer();
             card2 = m_memoryGameLogic.FindMattchingCard(card1);
 
-            if(card2 != null)
-            {
-                //change to Card types
-                //m_memoryGameLogic.CheckForMatchAndUpdateAccordinly)
-            }
-            else
+            if (card2 == null) // meaning here there is a match
             {
                 card2 = m_memoryGameLogic.GetRandomCardFromComputer();
             }
 
-            //change to Card types
-            //m_memoryGameLogic.CheckForMatchAndUpdateAccordinly)
+            //cardsAreMatched = m_memoryGameLogic.CheckForMatchAndUpdateAccordinly(card1, card2);
+
+            //if (cardsAreMatched == false)
+            //{
+            //    m_memoryGameLogic.UpdateCardInComputerData(card1, card2);
+            //}
+
+        }
+
+        m_memoryGameLogic.FlipChosenCard(card2, true);
+        updateGameScreen();
+
+        cardsAreMatched = m_memoryGameLogic.CheckForMatchAndUpdateAccordinly(card1, card2);
+
+        if (cardsAreMatched == false)
+        {
+            m_memoryGameLogic.UpdateCardInComputerData(card1, card2);
         }
 
     }
 
+    
+
     private void playHumanTurn()
     {
         bool cardsAreMatched;
+        bool revealCard = true;
 
         // first pick
-        (m_FirstPickRowSlot, m_FirstPickColSlot) = GetVaildSlotFromUser(m_RowDimention, m_ColDimention);
-        m_memoryGameLogic.FlipChosenCard(m_FirstPickRowSlot, m_FirstPickColSlot);
+        (m_FirstCard) = GetVaildSlotFromUser(m_RowDimention, m_ColDimention);
+        m_memoryGameLogic.FlipChosenCard(m_FirstCard, revealCard);
         updateGameScreen();
 
         // second pick
-        (m_SecondPickRowSlot, m_SecondPickColSlot) = GetVaildSlotFromUser(m_RowDimention, m_ColDimention);
-        m_memoryGameLogic.FlipChosenCard(m_SecondPickRowSlot, m_SecondPickColSlot);
+        (m_SecondCard) = GetVaildSlotFromUser(m_RowDimention, m_ColDimention);
+        m_memoryGameLogic.FlipChosenCard(m_SecondCard, revealCard);
         updateGameScreen();
 
-
-         cardsAreMatched = m_memoryGameLogic.CheckForMatchAndUpdateAccordinly(m_FirstPickRowSlot, m_FirstPickColSlot, m_SecondPickRowSlot, m_SecondPickColSlot);
+         cardsAreMatched = m_memoryGameLogic.CheckForMatchAndUpdateAccordinly(m_FirstCard, m_SecondCard);
 
         if(m_memoryGameLogic.IsComputerVsPlayerGame == true)
         {
             if(cardsAreMatched == false)
             {
+                m_memoryGameLogic.UpdateCardInComputerData(m_FirstCard, m_SecondCard);
 
-                m_memoryGameLogic.UpdateCardInComputerData(m_FirstPickRowSlot, m_FirstPickColSlot, m_SecondPickRowSlot, m_SecondPickColSlot);
-               
-
+            }
+            else
+            {
+                m_memoryGameLogic.DeleteCardsFromComputerData(m_FirstCard);
             }
         }
 
@@ -143,22 +222,17 @@ class InputManager
         DisplayBoard(m_memoryGameLogic.GetBoardState(), m_memoryGameLogic.GetBoardReveals());
     }
   
-    private (int,int) GetVaildSlotFromUser(int i_RowDimention, int i_ColDimention)
-    {
-
-        int row, col;
+    private Card GetVaildSlotFromUser(int i_RowDimention, int i_ColDimention)
+    {        
+        Card card = GetSlots(i_RowDimention, i_ColDimention); // UI checks that its withing dimentions of the board
         
-        (row, col) = GetSlots(i_RowDimention, i_ColDimention); // UI checks that its withing dimentions of the board
-        while (!(m_memoryGameLogic.IsValidEmptySlot(row, col))) // checks with the Logic if the slot is not taken already
+        while (!(m_memoryGameLogic.IsValidEmptySlot(card))) // checks with the Logic if the slot is not taken already
         {
             errorHandling.InvalidTakenSlotError();
-            (row, col) = GetSlots(i_RowDimention, i_ColDimention);
+            card = GetSlots(i_RowDimention, i_ColDimention);
         }
 
-        
-
-        return (row, col);
-
+        return card;
     }
   
     private void DisplayBoard(char[,] boardState, bool[,] boardReveals)
@@ -214,48 +288,92 @@ class InputManager
         Console.WriteLine(sb.ToString());
     }
 
+    //private void GetGameMode() // true means TwoPlayerGame, false PlayerVsComputer
+    //{
+
+    //    PrintMessage("Enter 1 - Two players game");
+    //    PrintMessage("Enter 2 - Player vs Computer");
+
+    //    bool gameMode;
+    //    string userModeChoice;
+
+    //    do
+    //    {
+    //        userModeChoice = Console.ReadLine();
+    //        if (!userModeChoice.Equals("1") && !userModeChoice.Equals("2"))
+    //        {
+    //            errorHandling.InvalidGameModeError();
+    //        }
+
+    //    } while (!userModeChoice.Equals("1") && !userModeChoice.Equals("2"));
+
+    //    if(userModeChoice.Equals("1"))
+    //    {
+    //        gameMode = v_TwoPlayersGame;
+    //    }
+    //    else
+    //    {
+    //        gameMode = v_PlayerVsComputerGame;
+    //    }
+
+    //    m_memoryGameLogic.GetGameModeFromUser(gameMode);      
+    //}
+
+
     private void GetGameMode() // true means TwoPlayerGame, false PlayerVsComputer
     {
+        DisplayGameModeOptions();
 
+        string userModeChoice = GetUserGameModeChoice();
+
+        bool gameMode = DetermineGameMode(userModeChoice);
+
+        m_memoryGameLogic.GetGameModeFromUser(gameMode);
+    }
+
+    private void DisplayGameModeOptions()
+    {
         PrintMessage("Enter 1 - Two players game");
         PrintMessage("Enter 2 - Player vs Computer");
+    }
 
-        bool gameMode;
+    private string GetUserGameModeChoice()
+    {
         string userModeChoice;
 
         do
         {
             userModeChoice = Console.ReadLine();
-            if (!userModeChoice.Equals("1") && !userModeChoice.Equals("2"))
+            if (!IsValidGameModeChoice(userModeChoice))
             {
                 errorHandling.InvalidGameModeError();
             }
+        } while (!IsValidGameModeChoice(userModeChoice));
 
-        } while (!userModeChoice.Equals("1") && !userModeChoice.Equals("2"));
-
-        if(userModeChoice.Equals("1"))
-        {
-            gameMode = v_TwoPlayersGame;
-        }
-        else
-        {
-            gameMode = v_PlayerVsComputerGame;
-        }
-
-        m_memoryGameLogic.GetGameModeFromUser(gameMode);      
-
+        return userModeChoice;
     }
+
+    private bool IsValidGameModeChoice(string choice)
+    {
+        return choice.Equals(m_TwoPlayersChoice) || choice.Equals(m_PlayerVsComputerChoice);
+    }
+
+    private bool DetermineGameMode(string userModeChoice)
+    {
+        return userModeChoice.Equals(m_TwoPlayersChoice);
+    }
+
 
     private void GetPlayersNames()
     {
         List<Player> players = new List<Player>();
 
-        string firstPlayerName;
-        string secondPlayerName;
+        string firstPlayerName = null;
+        string secondPlayerName = null ;
 
         firstPlayerName = GetPlayerName("Enter first player's name: ");
 
-        if (v_TwoPlayersGame) // meaing playing agaist another player 
+        if (!m_memoryGameLogic.IsComputerVsPlayerGame) // meaing playing agaist another player 
         {
             secondPlayerName = GetPlayerName("Enter second player's name: ");
         }
@@ -266,7 +384,6 @@ class InputManager
 
         m_memoryGameLogic.AddPlayersToGame(firstPlayerName, secondPlayerName);
 
-        //return (firstPlayerName, secondPlayerName);
     }
 
     private string GetPlayerName(string i_Message)
@@ -328,9 +445,6 @@ class InputManager
 
         m_RowDimention = currentRowDimention;
         m_ColDimention = currentColDimention;
-
-        //return (currentRowDimention, currentColDimention);
-
     }
 
     private int GetBoardRows()
@@ -394,11 +508,12 @@ class InputManager
 
     }
 
-    private (int, int) GetSlots(int i_CurrentRowDimention, int i_CurrentColDimention)
+    private Card GetSlots(int i_CurrentRowDimention, int i_CurrentColDimention)
     {
         int rowSlot = GetSlotForRow(i_CurrentRowDimention);
         int colSlot = GetSlotForCol(i_CurrentColDimention);
-        return (rowSlot, colSlot);
+
+        return new Card(rowSlot, colSlot);
     }
 
     private int GetSlotForRow(int i_CurrentRowDimention)

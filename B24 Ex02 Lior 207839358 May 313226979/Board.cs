@@ -32,6 +32,7 @@ class Board
         get { return m_Columns; }
     }
 
+
     // this way, outside methods cannot change the board state
     public char[,] GetBoardState()
     {
@@ -47,20 +48,31 @@ class Board
     //{
     //    return (char)m_BoardState[i_Row, i_Col];
     //}
+
     public char GetCharFromIndexInBoard(Card i_Card)
     {
 
-        return (char)m_BoardState[i_Card.Row, i_Card.Col];
+        return (char)m_BoardState[i_Card.Row-1, i_Card.Col-1];
     }
 
-    public static bool CheckIfCanCreateBoardWithDimentions(Card i_Card)
+    public void RevealedCard(Card i_Card)
+    {
+        m_BoardReveals[i_Card.Row-1, i_Card.Col-1] = true;
+    }
+
+    public void HideCard(Card i_Card)
+    {
+        m_BoardReveals[i_Card.Row - 1, i_Card.Col - 1] = false;
+    }
+
+    public static bool CheckIfCanCreateBoardWithDimentions(int i_Row, int i_Col)
     {
 
         bool validBoardDimention = true;
 
-        bool rowNumberIsOdd = (i_Card.Row % 2 == 1);
+        bool rowNumberIsOdd = (i_Row % 2 == 1);
 
-        if ((i_Card.Col % 2 == 1) && (rowNumberIsOdd == true))
+        if ((i_Col % 2 == 1) && (rowNumberIsOdd == true))
         {
             validBoardDimention = false;
         }
@@ -169,20 +181,20 @@ class Board
     }
 
 
-    public bool CheckIfSameCards(int row1, int col1, int row2, int col2)
-    {
-        return (m_BoardState[row1-1, col1 - 1] == m_BoardState[row2-1, col2 - 1]);
-    }
-
     public bool CheckIfSameCards(Card i_Card1, Card i_Card2)
     {
-        return (m_BoardState[row1 - 1, col1 - 1] == m_BoardState[row2 - 1, col2 - 1]);
+        return (m_BoardState[i_Card1.Row-1, i_Card1.Col -1] == m_BoardState[i_Card2.Row - 1, i_Card2.Col - 1]);
     }
 
-    public bool CheckIfEmptySlot(int i_SlotRow, int i_SlotCol)
+    //public bool CheckIfSameCards(Card i_Card1, Card i_Card2)
+    //{
+    //    return (m_BoardState[row1 - 1, col1 - 1] == m_BoardState[row2 - 1, col2 - 1]);
+    //}
+
+    public bool CheckIfEmptySlot(Card i_Card)
     {
 
-        return (m_BoardReveals[i_SlotRow-1, i_SlotCol-1] == false) ? true : false;
+        return !(m_BoardReveals[i_Card.Row - 1, i_Card.Col - 1]);
     }
 
     public Card FindAHiddenCardInBoard(Player i_ComputerPlayer)
@@ -211,22 +223,22 @@ class Board
         return card;
     }
 
-    public void FlipCardStateOnBoard(int i_Row, int i_Col)
+    public void FlipCardStateOnBoard(Card i_Card)
     {
-        if(m_BoardReveals[i_Row-1, i_Col-1] == true)
+        if(m_BoardReveals[i_Card.Row - 1, i_Card.Col - 1] == true)
         {
-            m_BoardReveals[i_Row-1, i_Col-1] = false;
+            m_BoardReveals[i_Card.Row - 1, i_Card.Col - 1] = false;
         }
         else
         {
-            m_BoardReveals[i_Row-1, i_Col-1] = true;
+            m_BoardReveals[i_Card.Row - 1, i_Card.Col - 1] = true;
         }
     }
 
-    public void ChangeCardsStateOnBoard(int row1, int col1, int row2, int col2)
+    public void ChangeCardsStateOnBoard(Card i_Card1, Card i_Card2)
     {
-        m_BoardReveals[row1-1, col1-1] = true;
-        m_BoardReveals[row2-1, col2-1] = true;
+        m_BoardReveals[i_Card1.Row - 1, i_Card1.Col - 1] = true;
+        m_BoardReveals[i_Card2.Row - 1, i_Card2.Col - 1] = true;
     }
 
     public bool IsBoardFull()
