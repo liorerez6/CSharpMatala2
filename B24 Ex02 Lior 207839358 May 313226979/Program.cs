@@ -7,7 +7,7 @@ class Program
     public static void Main()
     {
 
-        InputManager inputManger = new InputManager();
+        MemoryGameInputManager inputManger = new MemoryGameInputManager();
 
         inputManger.PlayGame();
 

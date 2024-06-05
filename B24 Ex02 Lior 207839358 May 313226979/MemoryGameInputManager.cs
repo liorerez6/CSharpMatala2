@@ -5,7 +5,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
-class InputManager
+class MemoryGameInputManager
 {
 
     private const bool m_GotCorrectInputFromUser = true;
@@ -99,7 +99,6 @@ class InputManager
 
         m_MemoryGameLogic.FlipChosenCard(card1, true);
 
-        //if both are not null values
         if (card2 == null)    // here are match
         {
             card2 = m_MemoryGameLogic.FindMatchingCard(card1);
@@ -109,12 +108,6 @@ class InputManager
                 card2 = m_MemoryGameLogic.GetRandomCardFromComputer();
             }
 
-            //cardsAreMatched = m_MemoryGameLogic.CheckForMatchAndUpdateAccordinly(card1, card2);
-
-            //if (cardsAreMatched == false)
-            //{
-            //    m_MemoryGameLogic.UpdateCardInComputerData(card1, card2);
-            //}
 
         }
 
