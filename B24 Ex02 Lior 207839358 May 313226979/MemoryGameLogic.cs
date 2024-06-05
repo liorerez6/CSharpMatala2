@@ -6,11 +6,9 @@ public class MemoryGameLogic
 
     private List<Player> m_Players;
     private Board m_Board;
-    bool m_IsComputerPlayerGame;
+    private bool m_IsComputerPlayerGame;
     private int m_NumberOfTurns;
-    bool m_GameIsOver;
-
-
+    private bool m_GameIsOver;
 
     public MemoryGameLogic()
     {
@@ -20,7 +18,18 @@ public class MemoryGameLogic
         m_GameIsOver = false;
     }
 
-    public bool GameIsOver
+    public void reGameSetup()
+    {
+        const int v_FirstPlayer = 0;
+        const int v_SecondPlayer = 1;
+
+        m_GameIsOver = false;
+        m_NumberOfTurns = 0;
+        m_Players[v_FirstPlayer].InitilizeScore();
+        m_Players[v_SecondPlayer].InitilizeScore();
+    }
+
+    public bool GameIsOverStatus
     {
         get { return m_GameIsOver; }
     }
@@ -85,7 +94,6 @@ public class MemoryGameLogic
         return m_Board.IsBoardFull();
     }
 
-
     public bool IsValidEmptySlot(Card i_Card)
     {
         return (m_Board.CheckIfEmptySlot(i_Card));
@@ -103,7 +111,10 @@ public class MemoryGameLogic
         }
     }
 
-
+    public void RegameIsActived()
+    {
+        m_GameIsOver = false;
+    }
 
     public (Card, Card) CheckForMatchedCardsInMemoryList()
     {
@@ -201,6 +212,12 @@ public class MemoryGameLogic
     {
         Player currentPlayer = m_Players[m_NumberOfTurns % 2];
         return (currentPlayer.Name, currentPlayer.Score);
+    }
+
+    public bool ChangeSlotWhithingDimentions(int i_Row, int i_Col)
+    {
+        return (i_Col <= m_Board.Col && i_Col >= 1 && i_Row <= m_Board.Row && i_Row >= 1);
+
     }
 
 }

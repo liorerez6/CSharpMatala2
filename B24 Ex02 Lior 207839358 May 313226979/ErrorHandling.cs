@@ -29,7 +29,21 @@ class ErrorHandling
 
     public void InvalidSlotError(int dimension, string slotType)
     {
-        Console.WriteLine($"Error: Invalid number, slot {slotType} number should be (1-{dimension}).");
+        if (slotType.Equals("row"))
+        {
+            Console.WriteLine($"Error: Invalid number, slot {slotType} number should be (1-{dimension}).");
+        }
+        else if (slotType.Equals("col"))
+        {
+            char maxColLetter = (char)('A' + dimension - 1);
+            Console.WriteLine($"Error: Invalid letter, slot {slotType} should be (A-{maxColLetter}).");
+        }
+    }
+
+    public void InvalidSlotOutOfDimention()
+    {
+        Console.WriteLine($"Error: Invalid slot choice, out of board's dimention.");
+
     }
 
     public void InvalidTakenSlotError()
