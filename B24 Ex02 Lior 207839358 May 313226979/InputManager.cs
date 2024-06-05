@@ -7,17 +7,13 @@ using System.Text;
 
 class InputManager
 {
-    //private const bool v_TwoPlayersGame = true;
-    //private const bool v_PlayerVsComputerGame = false;
-    private const bool v_GotCorrectInputFromUser = true;
-    private const int v_MaxDimention = 6;
-    private const int v_MinDimention = 4;
 
-    private const string m_TwoPlayersChoice = "1";
-    private const string m_PlayerVsComputerChoice = "2";
+    private const bool m_GotCorrectInputFromUser = true;
+    private const int m_MaxDimention = 6;
+    private const int m_MinDimention = 4;
 
-    private readonly ErrorHandling errorHandling = new ErrorHandling();
-    private MemoryGameLogic m_memoryGameLogic = new MemoryGameLogic();
+    private readonly ErrorHandling m_ErrorHandling = new ErrorHandling();
+    private MemoryGameLogic m_MemoryGameLogic = new MemoryGameLogic();
     private bool m_UserInerfaceIsOn = true;
 
     private Card m_FirstCard, m_SecondCard;
@@ -38,7 +34,7 @@ class InputManager
             if (askUserForReGame() == v_PlayerWantsReGame)
             {
                 Screen.Clear();
-                m_memoryGameLogic.reGameSetup();
+                m_MemoryGameLogic.reGameSetup();
             }
 
             else 
@@ -66,11 +62,11 @@ class InputManager
 
         GetBoardDimentions();
 
-        while (!m_memoryGameLogic.GameIsOverStatus)
+        while (!m_MemoryGameLogic.GameIsOverStatus)
         {
             updateGameScreen();
 
-            if (m_memoryGameLogic.GetPlayersTurn() == "Computer")
+            if (m_MemoryGameLogic.GetPlayersTurn() == "Computer")
             {
                 playComputerTurn();
 
@@ -94,42 +90,42 @@ class InputManager
         bool cardsAreMatched;
 
         //check if there is a liast with 2 cards --> true: reveald them
-        (Card card1, Card card2) = (m_memoryGameLogic.CheckForMatchedCardsInMemoryList());
+        (Card card1, Card card2) = (m_MemoryGameLogic.CheckForMatchedCardsInMemoryList());
         
         if(card1 == null)
         {
-            card1 = m_memoryGameLogic.GetRandomCardFromComputer();
+            card1 = m_MemoryGameLogic.GetRandomCardFromComputer();
         }
 
-        m_memoryGameLogic.FlipChosenCard(card1, true);
+        m_MemoryGameLogic.FlipChosenCard(card1, true);
 
         //if both are not null values
         if (card2 == null)    // here are match
         {
-            card2 = m_memoryGameLogic.FindMattchingCard(card1);
+            card2 = m_MemoryGameLogic.FindMatchingCard(card1);
 
             if (card2 == null) // meaning here there is a match
             {
-                card2 = m_memoryGameLogic.GetRandomCardFromComputer();
+                card2 = m_MemoryGameLogic.GetRandomCardFromComputer();
             }
 
-            //cardsAreMatched = m_memoryGameLogic.CheckForMatchAndUpdateAccordinly(card1, card2);
+            //cardsAreMatched = m_MemoryGameLogic.CheckForMatchAndUpdateAccordinly(card1, card2);
 
             //if (cardsAreMatched == false)
             //{
-            //    m_memoryGameLogic.UpdateCardInComputerData(card1, card2);
+            //    m_MemoryGameLogic.UpdateCardInComputerData(card1, card2);
             //}
 
         }
 
-        m_memoryGameLogic.FlipChosenCard(card2, true);
+        m_MemoryGameLogic.FlipChosenCard(card2, true);
         updateGameScreen();
 
-        cardsAreMatched = m_memoryGameLogic.CheckForMatchAndUpdateAccordinly(card1, card2);
+        cardsAreMatched = m_MemoryGameLogic.CheckForMatchAndUpdateAccordinly(card1, card2);
 
         if (cardsAreMatched == false)
         {
-            m_memoryGameLogic.UpdateCardInComputerData(card1, card2);
+            m_MemoryGameLogic.UpdateCardInComputerData(card1, card2);
         }
 
     }
@@ -142,26 +138,26 @@ class InputManager
 
         // first pick
         (m_FirstCard) = GetVaildSlotFromUser(m_RowDimention, m_ColDimention);
-        m_memoryGameLogic.FlipChosenCard(m_FirstCard, revealCard);
+        m_MemoryGameLogic.FlipChosenCard(m_FirstCard, revealCard);
         updateGameScreen();
 
         // second pick
         (m_SecondCard) = GetVaildSlotFromUser(m_RowDimention, m_ColDimention);
-        m_memoryGameLogic.FlipChosenCard(m_SecondCard, revealCard);
+        m_MemoryGameLogic.FlipChosenCard(m_SecondCard, revealCard);
         updateGameScreen();
 
-         cardsAreMatched = m_memoryGameLogic.CheckForMatchAndUpdateAccordinly(m_FirstCard, m_SecondCard);
+         cardsAreMatched = m_MemoryGameLogic.CheckForMatchAndUpdateAccordinly(m_FirstCard, m_SecondCard);
 
-        if(m_memoryGameLogic.IsComputerVsPlayerGame == true)
+        if(m_MemoryGameLogic.IsComputerVsPlayerGame == true)
         {
             if(cardsAreMatched == false)
             {
-                m_memoryGameLogic.UpdateCardInComputerData(m_FirstCard, m_SecondCard);
+                m_MemoryGameLogic.UpdateCardInComputerData(m_FirstCard, m_SecondCard);
 
             }
             else
             {
-                m_memoryGameLogic.DeleteCardsFromComputerData(m_FirstCard);
+                m_MemoryGameLogic.DeleteCardsFromComputerData(m_FirstCard);
             }
         }
 
@@ -172,21 +168,21 @@ class InputManager
         string currentPlayerName;
         int currentPlayerScore;
 
-        (currentPlayerName, currentPlayerScore) = m_memoryGameLogic.GetCurrentPlayerInfo();
+        (currentPlayerName, currentPlayerScore) = m_MemoryGameLogic.GetCurrentPlayerInfo();
 
         Screen.Clear();
         Console.WriteLine($"{currentPlayerName}'s Turn");
         Console.WriteLine($"Score: {currentPlayerScore}\n");
-        DisplayBoard(m_memoryGameLogic.GetBoardState(), m_memoryGameLogic.GetBoardReveals());
+        DisplayBoard(m_MemoryGameLogic.GetBoardState(), m_MemoryGameLogic.GetBoardReveals());
     }
   
     private Card GetVaildSlotFromUser(int i_RowDimention, int i_ColDimention)
     {        
         Card card = GetSlots(i_RowDimention, i_ColDimention); // UI checks that its withing dimentions of the board
         
-        while (!(m_memoryGameLogic.IsValidEmptySlot(card))) // checks with the Logic if the slot is not taken already
+        while (!(m_MemoryGameLogic.IsValidEmptySlot(card))) // checks with the Logic if the slot is not taken already
         {
-            errorHandling.InvalidTakenSlotError();
+            m_ErrorHandling.InvalidTakenSlotError();
             card = GetSlots(i_RowDimention, i_ColDimention);
         }
 
@@ -259,7 +255,7 @@ class InputManager
 
         bool gameMode = DetermineGameMode(userModeChoice);
 
-        m_memoryGameLogic.GetGameModeFromUser(gameMode);
+        m_MemoryGameLogic.GetGameModeFromUser(gameMode);
     }
 
     private void DisplayGameModeOptions()
@@ -270,6 +266,8 @@ class InputManager
 
     private bool DetermineGameMode(string userModeChoice)
     {
+        const string m_TwoPlayersChoice = "1";
+
         return userModeChoice.Equals(m_TwoPlayersChoice);
     }
 
@@ -283,6 +281,7 @@ class InputManager
         PrintMessage("Enter 2 - No");
 
         string userChoice = GetUserChoice(new string[] { v_UserWantsReGame, v_UserDontWantReGame });
+
         return userChoice.Equals(v_UserWantsReGame);
     }
 
@@ -295,7 +294,7 @@ class InputManager
             userChoice = Console.ReadLine();
             if (!IsValidChoice(userChoice, validChoices))
             {
-                errorHandling.InvalidGameModeError();
+                m_ErrorHandling.InvalidGameModeError();
             }
         } while (!IsValidChoice(userChoice, validChoices));
 
@@ -316,7 +315,7 @@ class InputManager
 
         firstPlayerName = GetPlayerName("Enter first player's name: ");
 
-        if (!m_memoryGameLogic.IsComputerVsPlayerGame) // meaing playing agaist another player 
+        if (!m_MemoryGameLogic.IsComputerVsPlayerGame) // meaing playing agaist another player 
         {
             secondPlayerName = GetPlayerName("Enter second player's name: ");
         }
@@ -325,7 +324,7 @@ class InputManager
             secondPlayerName = "Computer";
         }
 
-        m_memoryGameLogic.AddPlayersToGame(firstPlayerName, secondPlayerName);
+        m_MemoryGameLogic.AddPlayersToGame(firstPlayerName, secondPlayerName);
 
     }
 
@@ -338,7 +337,7 @@ class InputManager
             playerName = Console.ReadLine();
             if (!IsValidName(playerName))
             {
-                errorHandling.InvalidNameError();
+                m_ErrorHandling.InvalidNameError();
             }
 
         } while (!IsValidName(playerName));
@@ -377,9 +376,9 @@ class InputManager
         rowNumberIsOdd = currentRowDimention % 2 != 0;
         currentColDimention = GetBoardCols(rowNumberIsOdd);
 
-        while (!m_memoryGameLogic.GetBoardDimentionsFromUser(currentRowDimention, currentColDimention))
+        while (!m_MemoryGameLogic.GetBoardDimentionsFromUser(currentRowDimention, currentColDimention))
         {
-            errorHandling.InvalidOddColsError();
+            m_ErrorHandling.InvalidOddColsError();
 
             currentRowDimention = GetBoardRows();
             rowNumberIsOdd = currentRowDimention % 2 != 0;
@@ -392,28 +391,28 @@ class InputManager
 
     private int GetBoardRows()
     {
-        while (v_GotCorrectInputFromUser)
+        while (m_GotCorrectInputFromUser)
         {
             Console.Write("Enter the number of rows (4 - 6): ");
             string input = Console.ReadLine();
 
             if (int.TryParse(input, out int rows))  // now only checks if int
             {
-                if(rows >= v_MinDimention && rows <= v_MaxDimention)
+                if(rows >= m_MinDimention && rows <= m_MaxDimention)
                 {
                     
                     return rows;
                 }
                 else
                 {
-                    errorHandling.InvalidRowDimensionError();
+                    m_ErrorHandling.InvalidRowDimensionError();
                 }
             }
 
             else
             {
 
-                errorHandling.InvalidRowDimensionError();
+                m_ErrorHandling.InvalidRowDimensionError();
             }
         }
 
@@ -421,7 +420,7 @@ class InputManager
 
     private int GetBoardCols(bool i_RowNumberIsOdd) // now only checks if int
     {
-        while (v_GotCorrectInputFromUser)
+        while (m_GotCorrectInputFromUser)
         {
 
             Console.Write(i_RowNumberIsOdd ? "Enter the number of cols (4 or 6): " : "Enter the number of cols (4 - 6): ");
@@ -430,21 +429,21 @@ class InputManager
 
             if (int.TryParse(input, out int cols))
             {
-                if (cols >= v_MinDimention && cols <= v_MaxDimention)
+                if (cols >= m_MinDimention && cols <= m_MaxDimention)
                 {
                     
                     return cols;
                 }
                 else
                 {
-                    errorHandling.InvalidColsDimensionError();
+                    m_ErrorHandling.InvalidColsDimensionError();
                 }
             }
 
             else
             {
 
-                errorHandling.InvalidColsDimensionError();
+                m_ErrorHandling.InvalidColsDimensionError();
 
             }
         }
@@ -453,17 +452,17 @@ class InputManager
 
     private Card GetSlots(int i_CurrentRowDimention, int i_CurrentColDimention)
     {
-        while(v_GotCorrectInputFromUser)
+        while(m_GotCorrectInputFromUser)
         {
             int rowSlot = GetSlotForRow(i_CurrentRowDimention);
             int colSlot = GetSlotForCol(i_CurrentColDimention);
-            if(m_memoryGameLogic.ChangeSlotWhithingDimentions(rowSlot, colSlot) == true)
+            if(m_MemoryGameLogic.ChangeSlotWhithingDimentions(rowSlot, colSlot) == true)
             {
                 return new Card(rowSlot, colSlot);
             }
             else
             {
-                errorHandling.InvalidSlotOutOfDimention();
+                m_ErrorHandling.InvalidSlotOutOfDimention();
             }
         }
     }  
@@ -480,7 +479,7 @@ class InputManager
 
     private int GetSlot(int dimension, string slotType) 
     {
-        while (v_GotCorrectInputFromUser)
+        while (m_GotCorrectInputFromUser)
         {
 
             if (slotType.Equals("row"))
@@ -514,7 +513,7 @@ class InputManager
 
                 else
                 {
-                    errorHandling.InvalidSlotError(dimension, slotType);
+                    m_ErrorHandling.InvalidSlotError(dimension, slotType);
                 }
             }
             

@@ -10,11 +10,11 @@ class Player
     private bool m_IsHumanPlayer = true;
     private Dictionary<char, List<Card>> m_RevealedCards;
 
-    public Player(string i_Name, bool humanIsPlaying)
+    public Player(string i_Name, bool i_HumanIsPlaying)
     {
         m_Name = i_Name;
         m_Score = 0;
-        m_IsHumanPlayer = humanIsPlaying;
+        m_IsHumanPlayer = i_HumanIsPlaying;
 
         if (!m_IsHumanPlayer)
         {
@@ -24,38 +24,44 @@ class Player
 
     public Card SearchForAMatchingCard(char i_Key)
     {
+        Card card = null;
 
         if (m_RevealedCards.ContainsKey(i_Key) && m_RevealedCards[i_Key].Count > 0)
         {
-            return m_RevealedCards[i_Key][0];
+            card = m_RevealedCards[i_Key][0];
         }
-        return null;
+
+        return card;
     }
 
     public bool IsCardInMemoryRevealedCards(Card i_SearchForCard, char i_Key)
     {
+        bool cardInMemory = false;
         
         if (m_RevealedCards.ContainsKey(i_Key))
         {
-            return m_RevealedCards[i_Key].Any(card => card.Row == i_SearchForCard.Row && card.Col == i_SearchForCard.Col);
+            cardInMemory =  m_RevealedCards[i_Key].Any(card => card.Row == i_SearchForCard.Row && card.Col == i_SearchForCard.Col);
         }
-        return false;
+
+        return cardInMemory;
     }
 
     public (Card, Card) CheckForMatchedCardsInMemoryList()
     {
+        (Card firstCard, Card secondCard) = (null, null);
+
         foreach (var card in m_RevealedCards)
         {
             if (card.Value.Count == 2)
             {
                 var card1 = card.Value[0];
                 var card2 = card.Value[1];
-                
-                
-                return (card1, card2);
+
+                (firstCard, secondCard) = (card1, card2);
             }
         }
-        return (null, null);
+
+        return (firstCard, secondCard);
     }
 
     public bool HumanIsPlaying
@@ -83,13 +89,13 @@ class Player
         m_RevealedCards.Remove(i_Key);
     }
 
-    public void UpdateCardInDictionary1(Card i_Card1, char i_CardKey)
+    public void UpdateCardInDictionary1(Card i_Card, char i_CardKey)
     {
         bool addNewCard = false;
 
         if (m_RevealedCards.ContainsKey(i_CardKey))
         {
-            addNewCard = (m_RevealedCards[i_CardKey])[0].AreCardEquals(i_Card1);
+            addNewCard = (m_RevealedCards[i_CardKey])[0].AreCardEquals(i_Card);
         }
         else
         {
@@ -98,37 +104,37 @@ class Player
 
         if (addNewCard == false)
         {
-            m_RevealedCards[i_CardKey].Add(i_Card1);
+            m_RevealedCards[i_CardKey].Add(i_Card);
         }
 
     }
 
-    public void UpdateCardsInDictionary(Card i_Card1, Card i_Card2, char i_FirstCard, char i_SecondCard)
+    public void UpdateCardsInDictionary(Card i_Card1, Card i_Card2, char i_FirstCardKey, char i_SecondCardKey)
     {
-        UpdateCardInDictionary1(i_Card1, i_FirstCard);
-        UpdateCardInDictionary1(i_Card2, i_SecondCard);
+        UpdateCardInDictionary1(i_Card1, i_FirstCardKey);
+        UpdateCardInDictionary1(i_Card2, i_SecondCardKey);
     }
 
-    public void UpdateCardInDictionary(Card i_Card1, Card i_Card2, char i_FirstCard, char i_SecondCard)
+    public void UpdateCardInDictionary(Card i_Card1, Card i_Card2, char i_FirstCardKey, char i_SecondCardKey)
     {
-        if (!m_RevealedCards.ContainsKey(i_FirstCard))
+        if (!m_RevealedCards.ContainsKey(i_FirstCardKey))
         {
-            m_RevealedCards[i_FirstCard] = new List<Card>();
+            m_RevealedCards[i_FirstCardKey] = new List<Card>();
         }
 
-        if (!m_RevealedCards.ContainsKey(i_SecondCard))
+        if (!m_RevealedCards.ContainsKey(i_SecondCardKey))
         {
-            m_RevealedCards[i_SecondCard] = new List<Card>();
+            m_RevealedCards[i_SecondCardKey] = new List<Card>();
         }
 
-        if (!m_RevealedCards[i_FirstCard].Contains(i_Card1))
+        if (!m_RevealedCards[i_FirstCardKey].Contains(i_Card1))
         {
-            m_RevealedCards[i_FirstCard].Add(i_Card1);
+            m_RevealedCards[i_FirstCardKey].Add(i_Card1);
         }
 
-        if (!m_RevealedCards[i_SecondCard].Contains(i_Card2))
+        if (!m_RevealedCards[i_SecondCardKey].Contains(i_Card2))
         {
-            m_RevealedCards[i_SecondCard].Add(i_Card2);
+            m_RevealedCards[i_SecondCardKey].Add(i_Card2);
         }
     }
 

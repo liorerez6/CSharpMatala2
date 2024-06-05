@@ -32,8 +32,6 @@ class Board
         get { return m_Columns; }
     }
 
-
-    // this way, outside methods cannot change the board state
     public char[,] GetBoardState()
     {
         return (char[,])m_BoardState.Clone();
@@ -44,11 +42,7 @@ class Board
         return (bool[,])m_BoardReveals.Clone();
     }
 
-    //public char GetCharFromIndexInBoard(int i_Row, int i_Col)
-    //{
-    //    return (char)m_BoardState[i_Row, i_Col];
-    //}
-
+   
     public char GetCharFromIndexInBoard(Card i_Card)
     {
 
@@ -80,24 +74,8 @@ class Board
         return validBoardDimention; // needs to explain each error of input (maybe enum)
     }
 
-    //public static bool CheckIfCanCreateBoardWithDimentions(int i_Rows, int i_Cols)
-    //{
-
-    //    bool validBoardDimention = true;
-
-    //    bool rowNumberIsOdd = (i_Rows % 2 == 1);
-
-    //    if ((i_Cols % 2 == 1) && (rowNumberIsOdd == true))
-    //    {
-    //        validBoardDimention = false;
-    //    }
-
-    //    return validBoardDimention; // needs to explain each error of input (maybe enum)
-    //}
-
     private void InitilizeBoard()
     {
-
         m_Letters = generatePairsOfLetters();
 
         ShuffleChars(m_Letters);
@@ -108,7 +86,6 @@ class Board
 
     private void fillBoardInChar(List<char> i_ListOfChars)
     {
-
         int indexOfList = 0;
 
         for(int i = 0; i<m_Rows;i++)
@@ -127,7 +104,6 @@ class Board
 
     private List<char> generatePairsOfLetters()
     {
-
         List<char> listOfPairs = new List<char>();
 
         int sizeOfPairs = (m_Columns * m_Rows) / 2;
@@ -147,10 +123,8 @@ class Board
 
     private void ShuffleChars(List<char> i_ListOfChars)
     {
-
         Random rng = new Random();
         int sizeOfList = i_ListOfChars.Count;
-
 
         while (sizeOfList > 1)
         {
@@ -162,38 +136,22 @@ class Board
         }
     }
 
-    //public void ReveldCard(int row, int col)
-    //{
-    //    // needs to check if its already occupied
-
-    //    Console.SetCursorPosition((col * 4) -1, row * 2 );
-    //    Console.Write(m_BoardState[row-1, col-1]);
-    //    Console.SetCursorPosition(0,0);
-    //}
-
     public void ReveldCard(Card i_Card)
     {
-        // needs to check if its already occupied
-
         Console.SetCursorPosition((i_Card.Col * 4) - 1, i_Card.Row * 2);
         Console.Write(m_BoardState[i_Card.Row - 1, i_Card.Col - 1]);
         Console.SetCursorPosition(0, 0);
     }
 
 
-    public bool CheckIfSameCards(Card i_Card1, Card i_Card2)
+    public bool CheckIfSameCards(Card i_FirstCard, Card i_SecondCard)
     {
-        return (m_BoardState[i_Card1.Row-1, i_Card1.Col -1] == m_BoardState[i_Card2.Row - 1, i_Card2.Col - 1]);
+        return (m_BoardState[i_FirstCard.Row-1, i_FirstCard.Col -1] == m_BoardState[i_SecondCard.Row - 1, i_SecondCard.Col - 1]);
     }
 
-    //public bool CheckIfSameCards(Card i_Card1, Card i_Card2)
-    //{
-    //    return (m_BoardState[row1 - 1, col1 - 1] == m_BoardState[row2 - 1, col2 - 1]);
-    //}
-
+   
     public bool CheckIfEmptySlot(Card i_Card)
     {
-
         return !(m_BoardReveals[i_Card.Row - 1, i_Card.Col - 1]);
     }
 
@@ -211,7 +169,6 @@ class Board
                     card = new Card(i+1, j+1);
                     char charOfCard = m_BoardState[i, j];
 
-                    //not in memory
                     if (!i_ComputerPlayer.IsCardInMemoryRevealedCards(card, charOfCard)) 
                     {
                         keepSearching = false;
@@ -235,10 +192,10 @@ class Board
         }
     }
 
-    public void ChangeCardsStateOnBoard(Card i_Card1, Card i_Card2)
+    public void ChangeCardsStateOnBoard(Card i_FirstCard, Card i_SecondCard)
     {
-        m_BoardReveals[i_Card1.Row - 1, i_Card1.Col - 1] = true;
-        m_BoardReveals[i_Card2.Row - 1, i_Card2.Col - 1] = true;
+        m_BoardReveals[i_FirstCard.Row - 1, i_FirstCard.Col - 1] = true;
+        m_BoardReveals[i_SecondCard.Row - 1, i_SecondCard.Col - 1] = true;
     }
 
     public bool IsBoardFull()

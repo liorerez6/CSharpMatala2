@@ -27,16 +27,16 @@ class ErrorHandling
         Console.WriteLine("Error: Number of cols should be Even (4 or 6).");
     }
 
-    public void InvalidSlotError(int dimension, string slotType)
+    public void InvalidSlotError(int i_Dimension, string i_SlotType)
     {
-        if (slotType.Equals("row"))
+        if (i_SlotType.Equals("row"))
         {
-            Console.WriteLine($"Error: Invalid number, slot {slotType} number should be (1-{dimension}).");
+            Console.WriteLine($"Error: Invalid number, slot {i_SlotType} number should be (1-{i_Dimension}).");
         }
-        else if (slotType.Equals("col"))
+        else if (i_SlotType.Equals("col"))
         {
-            char maxColLetter = (char)('A' + dimension - 1);
-            Console.WriteLine($"Error: Invalid letter, slot {slotType} should be (A-{maxColLetter}).");
+            char maxColLetter = (char)('A' + i_Dimension - 1);
+            Console.WriteLine($"Error: Invalid letter, slot {i_SlotType} should be (A-{maxColLetter}).");
         }
     }
 
