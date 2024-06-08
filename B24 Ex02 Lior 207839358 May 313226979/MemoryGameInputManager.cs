@@ -42,7 +42,7 @@ class MemoryGameInputManager
                 m_UserInerfaceIsOn = !v_PlayerWantsReGame;
             }
         }
-
+        Screen.Clear();
     }
 
     

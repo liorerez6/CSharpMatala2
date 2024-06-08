@@ -11,13 +11,8 @@ class Program
 
         inputManger.PlayGame();
 
-        Screen.Clear();
-       
-
-
+              
     }
-
-
 
 }
 
