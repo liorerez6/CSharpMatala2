@@ -18,7 +18,7 @@ class Board
         m_BoardState = new char[i_Rows, i_Cols];
         m_BoardReveals = new bool[i_Rows, i_Cols];
 
-        InitilizeBoard();
+        initilizeBoard();
 
     }
 
@@ -74,11 +74,11 @@ class Board
         return validBoardDimention; // needs to explain each error of input (maybe enum)
     }
 
-    private void InitilizeBoard()
+    private void initilizeBoard()
     {
         m_Letters = generatePairsOfLetters();
 
-        ShuffleChars(m_Letters);
+        shuffleChars(m_Letters);
 
         fillBoardInChar(m_Letters);
 
@@ -121,7 +121,7 @@ class Board
         return listOfPairs;
     }
 
-    private void ShuffleChars(List<char> i_ListOfChars)
+    private void shuffleChars(List<char> i_ListOfChars)
     {
         Random rng = new Random();
         int sizeOfList = i_ListOfChars.Count;

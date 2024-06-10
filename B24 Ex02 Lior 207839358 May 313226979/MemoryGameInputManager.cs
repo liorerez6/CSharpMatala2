@@ -567,7 +567,7 @@ class MemoryGameInputManager
     {
         const bool v_PlayerWantsReGame = true;
 
-        Console.WriteLine("Welcome to memory game!");
+        
         SetupGame();
 
         while (m_UserInerfaceIsOn)
@@ -592,6 +592,7 @@ class MemoryGameInputManager
 
     private void SetupGame()
     {
+        Console.WriteLine("Welcome to memory game!");
 
         GetGameMode();
         Console.Clear();
@@ -603,12 +604,22 @@ class MemoryGameInputManager
 
     private void PlayRounds()
     {
-
+        
         GetBoardDimentions();
 
         while (!m_MemoryGameLogic.GameIsOverStatus)
         {
             updateGameScreen();
+
+            //לוקחים 2 קלפים
+            //שולחים למתודה בלוגיקה
+            //היא יודעת איזה מצב היא נמצאת
+            //תקינים מבצעת את המהלך
+            //
+
+        
+
+
 
             if (m_MemoryGameLogic.GetPlayersTurn() == "Computer")
             {
@@ -797,6 +808,7 @@ class MemoryGameInputManager
 
     private void DisplayGameModeOptions()
     {
+
         Console.WriteLine("Enter 1 - Two players game");
         Console.WriteLine("Enter 2 - Player vs Computer");
     }
@@ -845,7 +857,7 @@ class MemoryGameInputManager
 
     private void GetPlayersNames()
     {
-        List<Player> players = new List<Player>();
+        //List<Player> players = new List<Player>();
 
         string firstPlayerName = null;
         string secondPlayerName = null;
@@ -908,7 +920,7 @@ class MemoryGameInputManager
         int currentColDimention;
         bool rowNumberIsOdd;
 
-
+        // to do kfilot code
         currentRowDimention = GetBoardRows();
         rowNumberIsOdd = currentRowDimention % 2 != 0;
         currentColDimention = GetBoardCols(rowNumberIsOdd);
