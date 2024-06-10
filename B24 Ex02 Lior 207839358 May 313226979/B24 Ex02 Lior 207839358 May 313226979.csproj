@@ -38,7 +38,7 @@
   <ItemGroup>
     <Compile Include="Board.cs" />
     <Compile Include="Card.cs" />
-    <Compile Include="ErrorHandling.cs" />
+    <Compile Include="ConsoleMessages.cs" />
     <Compile Include="MemoryGameInputManager.cs" />
     <Compile Include="MemoryGameLogic.cs" />
     <Compile Include="Player.cs" />
@@ -46,7 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Ex02.ConsoleUtils">
-      <HintPath>..\..\..\..\..\..\..\..\..\..\Temp\Ex02.ConsoleUtils.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Windows\Temp\Ex02.ConsoleUtils.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

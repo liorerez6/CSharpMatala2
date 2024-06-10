@@ -5,52 +5,68 @@ using System.Linq;
 
 class Player
 {
+    //CONSTANTS
+    private readonly string r_Name;
     private int m_Score;
-    private readonly string m_Name; // should be readonly because it doesn't change during the game.
-    private bool m_IsHumanPlayer = true;
-    private Dictionary<char, List<Card>> m_RevealedCards;
+    private Dictionary<char, List<Card>> m_ComputerDataForRevealedSlots = null;
 
-    public Player(string i_Name, bool i_HumanIsPlaying)
+    //DELETE?
+    //private bool m_IsHumanPlayer;            
+
+    //#############################
+
+    //CTOR
+    public Player(string i_Name, bool i_IsPlayerVSComputerMode)
     {
-        m_Name = i_Name;
+        r_Name = i_Name;
         m_Score = 0;
-        m_IsHumanPlayer = i_HumanIsPlaying;
+        //m_IsHumanPlayer = i_IsPlayerVSComputerMode;
 
-        if (!m_IsHumanPlayer)
+        if (i_IsPlayerVSComputerMode == true)
         {
-            m_RevealedCards = new Dictionary<char, List<Card>>();
+            m_ComputerDataForRevealedSlots = new Dictionary<char, List<Card>>();
         }
     }
 
-    public Card SearchForAMatchingCard(char i_Key)
+    //PROPERTIES
+    public int Score
+    {
+        set { m_Score = value; }
+        get { return m_Score; }
+    }
+
+    public string Name
+    {
+        get { return r_Name; } 
+    }
+
+
+    //METHODS
+
+    //For both kinds of players
+    public void IncreaseScore()
+    {
+        m_Score++;
+    }
+
+    //For Computer Player
+    public Card SearchInComputerMemoryMatchingSlotKey(char i_Key)
     {
         Card card = null;
 
-        if (m_RevealedCards.ContainsKey(i_Key) && m_RevealedCards[i_Key].Count > 0)
+        if (m_ComputerDataForRevealedSlots.ContainsKey(i_Key) && m_ComputerDataForRevealedSlots[i_Key].Count > 0)
         {
-            card = m_RevealedCards[i_Key][0];
+            card = m_ComputerDataForRevealedSlots[i_Key][0];
         }
 
         return card;
     }
 
-    public bool IsCardInMemoryRevealedCards(Card i_SearchForCard, char i_Key)
-    {
-        bool cardInMemory = false;
-        
-        if (m_RevealedCards.ContainsKey(i_Key))
-        {
-            cardInMemory =  m_RevealedCards[i_Key].Any(card => card.Row == i_SearchForCard.Row && card.Col == i_SearchForCard.Col);
-        }
-
-        return cardInMemory;
-    }
-
-    public (Card, Card) CheckForMatchedCardsInMemoryList()
+    public (Card, Card) SearchForMatchedCardsInComuterMemory()
     {
         (Card firstCard, Card secondCard) = (null, null);
 
-        foreach (var card in m_RevealedCards)
+        foreach (var card in m_ComputerDataForRevealedSlots)
         {
             if (card.Value.Count == 2)
             {
@@ -64,83 +80,79 @@ class Player
         return (firstCard, secondCard);
     }
 
-    public bool HumanIsPlaying
+    //need to improve readability
+    public bool IsCardInMemoryRevealedCards(Card i_SearchForCard, char i_Key)
     {
-        get { return m_IsHumanPlayer; }
-    }
+        bool cardInMemory = false;
+        
+        if (m_ComputerDataForRevealedSlots.ContainsKey(i_Key))
+        {
+            //foreach(Slot slot in m_ComputerDataForRevealedSlots[i_Key])
+            //{
+            //    cardInMemory = i_SearchForCard.IsEqualToSlot(slot);
+            //    if (cardInMemory == true)
+            //    {
+            //        break;
+            //    }
+            //}
+            cardInMemory =  m_ComputerDataForRevealedSlots[i_Key].Any(card => card.Row == i_SearchForCard.Row && card.Col == i_SearchForCard.Col);
+        }
 
-    public int Score
-    {
-        get { return m_Score; }
-    }
-
-    public string Name
-    {
-        get { return m_Name; } // doesn't need set because gets the Name after checking from the input Manager
-    }
-
-    public void IncreaseScore()
-    {
-        m_Score++;
+        return cardInMemory;
     }
 
     public void DeleteKeyFromData(char i_Key)
     {
-        m_RevealedCards.Remove(i_Key);
-    }
-
-    public void UpdateCardInDictionary1(Card i_Card, char i_CardKey)
-    {
-        bool addNewCard = false;
-
-        if (m_RevealedCards.ContainsKey(i_CardKey))
-        {
-            addNewCard = (m_RevealedCards[i_CardKey])[0].AreCardEquals(i_Card);
-        }
-        else
-        {
-            m_RevealedCards[i_CardKey] = new List<Card>();
-        }
-
-        if (addNewCard == false)
-        {
-            m_RevealedCards[i_CardKey].Add(i_Card);
-        }
-
+        m_ComputerDataForRevealedSlots.Remove(i_Key);
     }
 
     public void UpdateCardsInDictionary(Card i_Card1, Card i_Card2, char i_FirstCardKey, char i_SecondCardKey)
     {
-        UpdateCardInDictionary1(i_Card1, i_FirstCardKey);
-        UpdateCardInDictionary1(i_Card2, i_SecondCardKey);
+        UpdateCardInDictionary(i_Card1, i_FirstCardKey);
+        UpdateCardInDictionary(i_Card2, i_SecondCardKey);
     }
 
-    public void UpdateCardInDictionary(Card i_Card1, Card i_Card2, char i_FirstCardKey, char i_SecondCardKey)
+    public void UpdateCardInDictionary(Card i_Card, char i_CardKey)
     {
-        if (!m_RevealedCards.ContainsKey(i_FirstCardKey))
+        bool addNewCard = false;
+
+        if (m_ComputerDataForRevealedSlots.ContainsKey(i_CardKey))
         {
-            m_RevealedCards[i_FirstCardKey] = new List<Card>();
+            addNewCard = (m_ComputerDataForRevealedSlots[i_CardKey])[0].IsEqualToSlot(i_Card);
+        }
+        else
+        {
+            m_ComputerDataForRevealedSlots[i_CardKey] = new List<Card>();
         }
 
-        if (!m_RevealedCards.ContainsKey(i_SecondCardKey))
+        if (addNewCard == false)
         {
-            m_RevealedCards[i_SecondCardKey] = new List<Card>();
-        }
-
-        if (!m_RevealedCards[i_FirstCardKey].Contains(i_Card1))
-        {
-            m_RevealedCards[i_FirstCardKey].Add(i_Card1);
-        }
-
-        if (!m_RevealedCards[i_SecondCardKey].Contains(i_Card2))
-        {
-            m_RevealedCards[i_SecondCardKey].Add(i_Card2);
+            m_ComputerDataForRevealedSlots[i_CardKey].Add(i_Card);
         }
     }
 
-    public void InitilizeScore()
-    {
-        m_Score = 0;
-    }
+    //TO DELETE
+    //public void UpdateCardInDictionary(Slot i_Card1, Slot i_Card2, char i_FirstCardKey, char i_SecondCardKey)
+    //{
+    //    if (!m_ComputerDataForRevealedSlots.ContainsKey(i_FirstCardKey))
+    //    {
+    //        m_ComputerDataForRevealedSlots[i_FirstCardKey] = new List<Slot>();
+    //    }
+
+    //    if (!m_ComputerDataForRevealedSlots.ContainsKey(i_SecondCardKey))
+    //    {
+    //        m_ComputerDataForRevealedSlots[i_SecondCardKey] = new List<Slot>();
+    //    }
+
+    //    if (!m_ComputerDataForRevealedSlots[i_FirstCardKey].Contains(i_Card1))
+    //    {
+    //        m_ComputerDataForRevealedSlots[i_FirstCardKey].Add(i_Card1);
+    //    }
+
+    //    if (!m_ComputerDataForRevealedSlots[i_SecondCardKey].Contains(i_Card2))
+    //    {
+    //        m_ComputerDataForRevealedSlots[i_SecondCardKey].Add(i_Card2);
+    //    }
+    //}
 }
 
