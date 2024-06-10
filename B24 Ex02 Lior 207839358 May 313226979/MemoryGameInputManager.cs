@@ -490,7 +490,7 @@
 
 //            if(input.Equals("Q"))
 //            {
-//                EndGameMessage(); // **exit the game // *edit* no need. just inform the big game loop that the game is finish. 
+//                checkIfEndGameRequested(); // **exit the game // *edit* no need. just inform the big game loop that the game is finish. 
 //            }
 //            else
 //            {
@@ -533,13 +533,12 @@
 //        Console.WriteLine(message);
 //    }
 
-//    private void EndGameMessage()
+//    private void checkIfEndGameRequested()
 //    {
 //        Console.WriteLine("Game ended by user.");
 //        Environment.Exit(0);
 //    }
 //}
-
 
 
 using Ex02.ConsoleUtils;
@@ -555,6 +554,7 @@ class MemoryGameInputManager
     private const bool m_GotCorrectInputFromUser = true;
     private const int m_MaxDimention = 6;
     private const int m_MinDimention = 4;
+    private const string k_ExitGameKey = "Q";
 
     private readonly ErrorHandling m_ErrorHandling = new ErrorHandling();
     private MemoryGameLogic m_MemoryGameLogic = new MemoryGameLogic();
@@ -565,27 +565,14 @@ class MemoryGameInputManager
 
     public void PlayGame()
     {
-        const bool v_PlayerWantsReGame = true;
-
-        
         SetupGame();
 
         while (m_UserInerfaceIsOn)
         {
-
             PlayRounds();
-
-            if (askUserForReGame() == v_PlayerWantsReGame)
-            {
-                Screen.Clear();
-                m_MemoryGameLogic.reGameSetup();
-            }
-
-            else
-            {
-                m_UserInerfaceIsOn = !v_PlayerWantsReGame;
-            }
+            m_UserInerfaceIsOn = askUserForReGame();
         }
+
         Screen.Clear();
     }
 
@@ -604,27 +591,16 @@ class MemoryGameInputManager
 
     private void PlayRounds()
     {
-        
+        Screen.Clear();
         GetBoardDimentions();
 
         while (!m_MemoryGameLogic.GameIsOverStatus)
         {
             updateGameScreen();
 
-            //לוקחים 2 קלפים
-            //שולחים למתודה בלוגיקה
-            //היא יודעת איזה מצב היא נמצאת
-            //תקינים מבצעת את המהלך
-            //
-
-        
-
-
-
             if (m_MemoryGameLogic.GetPlayersTurn() == "Computer")
             {
                 playComputerTurn();
-
             }
             else
             {
@@ -636,6 +612,7 @@ class MemoryGameInputManager
         }
 
 
+        m_UserInerfaceIsOn = false;
 
 
     }
@@ -824,14 +801,21 @@ class MemoryGameInputManager
     {
         const string v_UserWantsReGame = "1";
         const string v_UserDontWantReGame = "2";
-
+        bool reGameStatus;
         Console.WriteLine("Do you want to play again?");
         Console.WriteLine("Enter 1 - Yes");
         Console.WriteLine("Enter 2 - No");
 
         string userChoice = GetUserChoice(new string[] { v_UserWantsReGame, v_UserDontWantReGame });
 
-        return userChoice.Equals(v_UserWantsReGame);
+        reGameStatus = userChoice.Equals(v_UserWantsReGame);
+
+        if(reGameStatus)
+        {
+            m_MemoryGameLogic.reGameSetup();
+        }
+
+        return reGameStatus;
     }
 
     private string GetUserChoice(string[] validChoices)
@@ -1018,6 +1002,7 @@ class MemoryGameInputManager
 
     private int GetSlotForRow(int i_CurrentRowDimention)
     {
+
         return GetSlot(i_CurrentRowDimention, "row");
     }
 
@@ -1028,6 +1013,8 @@ class MemoryGameInputManager
 
     private int GetSlot(int dimension, string slotType)
     {
+        //bool isExitGameKey = false;
+
         while (m_GotCorrectInputFromUser)
         {
 
@@ -1043,12 +1030,9 @@ class MemoryGameInputManager
             }
 
             string input = Console.ReadLine();
+            bool isExitGameKey = checkIfEndGameRequested(input);
 
-            if (input.Equals("Q"))
-            {
-                EndGameMessage(); // **exit the game // *edit* no need. just inform the big game loop that the game is finish. 
-            }
-            else
+            if (!isExitGameKey)
             {
                 if (slotType.Equals("row") && int.TryParse(input, out int slot))  // this related to the logic checks..
                 {
@@ -1065,7 +1049,6 @@ class MemoryGameInputManager
                     m_ErrorHandling.InvalidSlotError(dimension, slotType);
                 }
             }
-
         }
     }
 
@@ -1084,9 +1067,18 @@ class MemoryGameInputManager
         return validInput;
     }
 
-    private void EndGameMessage()
+    private bool checkIfEndGameRequested(string i_Input)
     {
-        Console.WriteLine("Game ended by user.");
-        Environment.Exit(0);
+        bool isExitGameKey = i_Input.Equals(k_ExitGameKey);
+
+        if (isExitGameKey)
+        {
+            Console.WriteLine("Game ended by user.");
+            m_UserInerfaceIsOn = false;
+            m_MemoryGameLogic.GameIsOverStatus = true;
+        }
+
+        return isExitGameKey;
+        //Environment.Exit(0);
     }
 }

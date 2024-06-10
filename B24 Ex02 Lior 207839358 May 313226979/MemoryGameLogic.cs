@@ -32,6 +32,7 @@ public class MemoryGameLogic
     public bool GameIsOverStatus
     {
         get { return m_GameIsOver; }
+        set { m_GameIsOver = value; }
     }
 
     public void GetGameModeFromUser(bool i_GameMode)
