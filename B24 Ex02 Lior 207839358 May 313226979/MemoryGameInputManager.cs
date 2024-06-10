@@ -1,598 +1,51 @@
-﻿//using Ex02.ConsoleUtils;
-//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Security.Cryptography;
-//using System.Text;
-
-//class MemoryGameInputManager
-//{
-
-//    private const bool m_GotCorrectInputFromUser = true;
-//    private const int m_MaxDimention = 6;
-//    private const int m_MinDimention = 4;
-
-//    private readonly ErrorHandling m_ErrorHandling = new ErrorHandling();
-//    private MemoryGameLogic m_MemoryGameLogic = new MemoryGameLogic();
-//    private bool m_UserInerfaceIsOn = true;
-
-//    private Card m_FirstCard, m_SecondCard;
-//    private int m_RowDimention, m_ColDimention;
-
-//    public void PlayGame()
-//    {
-//        const bool v_PlayerWantsReGame = true;
-
-//        PrintMessage("Welcome to memory game!");
-//        SetupGame();
-
-//        while (m_UserInerfaceIsOn)
-//        {
-
-//            PlayRounds();
-
-//            if (askUserForReGame() == v_PlayerWantsReGame)
-//            {
-//                Screen.Clear();
-//                m_MemoryGameLogic.reGameSetup();
-//            }
-
-//            else 
-//            {
-//                m_UserInerfaceIsOn = !v_PlayerWantsReGame;
-//            }
-//        }
-//        Screen.Clear();
-//    }
-
-
-//    private void SetupGame()
-//    {
-
-//        GetGameMode();
-//        Console.Clear();
-
-//        GetPlayersNames();
-//        Console.Clear();
-
-//    }
-
-//    private void PlayRounds()
-//    {
-
-//        GetBoardDimentions();
-
-//        while (!m_MemoryGameLogic.GameIsOverStatus)
-//        {
-//            updateGameScreen();
-
-//            if (m_MemoryGameLogic.GetPlayersTurn() == "Computer")
-//            {
-//                playComputerTurn();
-
-//            }
-//            else
-//            {
-//                playHumanTurn();
-//            }
-
-//            System.Threading.Thread.Sleep(2000);
-//            Screen.Clear();
-//        }
-
-
-
-
-//    }
-
-//    private void playComputerTurn()
-//    {
-//        bool cardsAreMatched;
-
-//        //check if there is a liast with 2 cards --> true: reveald them
-//        (Card card1, Card card2) = (m_MemoryGameLogic.CheckForMatchedCardsInMemoryList());
-
-//        if(card1 == null)
-//        {
-//            card1 = m_MemoryGameLogic.GetRandomCardFromComputer();
-//        }
-
-//        m_MemoryGameLogic.FlipChosenCard(card1, true);
-
-//        if (card2 == null)    // here are match
-//        {
-//            card2 = m_MemoryGameLogic.FindMatchingCard(card1);
-
-//            if (card2 == null) // meaning here there is a match
-//            {
-//                card2 = m_MemoryGameLogic.GetRandomCardFromComputer();
-//            }
-
-
-//        }
-
-//        m_MemoryGameLogic.FlipChosenCard(card2, true);
-//        updateGameScreen();
-
-//        cardsAreMatched = m_MemoryGameLogic.CheckForMatchAndUpdateAccordinly(card1, card2);
-
-//        if (cardsAreMatched == false)
-//        {
-//            m_MemoryGameLogic.UpdateCardInComputerData(card1, card2);
-//        }
-
-//    }
-
-
-//    private void playHumanTurn()
-//    {
-//        bool cardsAreMatched;
-//        bool revealCard = true;
-
-//        // first pick
-//        (m_FirstCard) = GetVaildSlotFromUser(m_RowDimention, m_ColDimention);
-//        m_MemoryGameLogic.FlipChosenCard(m_FirstCard, revealCard);
-//        updateGameScreen();
-
-//        // second pick
-//        (m_SecondCard) = GetVaildSlotFromUser(m_RowDimention, m_ColDimention);
-//        m_MemoryGameLogic.FlipChosenCard(m_SecondCard, revealCard);
-//        updateGameScreen();
-
-//         cardsAreMatched = m_MemoryGameLogic.CheckForMatchAndUpdateAccordinly(m_FirstCard, m_SecondCard);
-
-//        if(m_MemoryGameLogic.IsComputerVsPlayerGame == true)
-//        {
-//            if(cardsAreMatched == false)
-//            {
-//                m_MemoryGameLogic.UpdateCardInComputerData(m_FirstCard, m_SecondCard);
-
-//            }
-//            else
-//            {
-//                m_MemoryGameLogic.DeleteCardsFromComputerData(m_FirstCard);
-//            }
-//        }
-
-//    }
-
-//    private void updateGameScreen()
-//    {
-//        string currentPlayerName;
-//        int currentPlayerScore;
-
-//        (currentPlayerName, currentPlayerScore) = m_MemoryGameLogic.GetCurrentPlayerInfo();
-
-//        Screen.Clear();
-//        Console.WriteLine($"{currentPlayerName}'s Turn");
-//        Console.WriteLine($"Score: {currentPlayerScore}\n");
-//        DisplayBoard(m_MemoryGameLogic.GetBoardState(), m_MemoryGameLogic.GetBoardReveals());
-//    }
-
-//    private Card GetVaildSlotFromUser(int i_RowDimention, int i_ColDimention)
-//    {        
-//        Card card = GetSlots(i_RowDimention, i_ColDimention); // UI checks that its withing dimentions of the board
-
-//        while (!(m_MemoryGameLogic.IsValidEmptySlot(card))) // checks with the Logic if the slot is not taken already
-//        {
-//            m_ErrorHandling.InvalidTakenSlotError();
-//            card = GetSlots(i_RowDimention, i_ColDimention);
-//        }
-
-//        return card;
-//    }
-
-//    private void DisplayBoard(char[,] boardState, bool[,] boardReveals)
-//    {
-//        StringBuilder sb = new StringBuilder();
-//        sb.Append("   ");
-//        char firstLetter = 'A';
-
-//        for (int i = 0; i < boardState.GetLength(1); i++)
-//        {
-//            sb.Append(firstLetter);
-//            sb.Append("   ");
-//            firstLetter++;
-//        }
-
-//        sb.AppendLine();
-
-//        for (int i = 0; i < boardState.GetLength(0); i++)
-//        {
-//            sb.Append(" ");
-//            for (int k = 0; k <= boardState.GetLength(1) * 4; k++)
-//            {
-//                sb.Append("=");
-//            }
-//            sb.AppendLine();
-
-//            sb.Append(i + 1);
-
-//            for (int j = 0; j < boardState.GetLength(1); j++)
-//            {
-//                sb.Append("|");
-//                if (boardReveals[i, j])
-//                {
-//                    sb.Append(" ");
-//                    sb.Append(boardState[i, j]);
-//                    sb.Append(" ");
-//                }
-//                else
-//                {
-//                    sb.Append("   ");
-//                }
-//            }
-//            sb.Append("|");
-//            sb.AppendLine();
-//        }
-
-//        sb.Append(" ");
-//        for (int k = 0; k <= boardState.GetLength(1) * 4; k++)
-//        {
-//            sb.Append("=");
-//        }
-
-//        Console.WriteLine(sb.ToString());
-//    }
-
-//    private void GetGameMode() // true means TwoPlayerGame, false PlayerVsComputer
-//    {
-
-//        const string v_UserWantsPlayerVsPlayerGame = "1";
-//        const string v_UserWantsPlayerVsComputerGame = "2";
-
-
-//        DisplayGameModeOptions();
-
-//        string userModeChoice = GetUserChoice(new string[] { v_UserWantsPlayerVsPlayerGame, v_UserWantsPlayerVsComputerGame });
-
-//        bool gameMode = DetermineGameMode(userModeChoice);
-
-//        m_MemoryGameLogic.GetGameModeFromUser(gameMode);
-//    }
-
-//    private void DisplayGameModeOptions()
-//    {
-//        PrintMessage("Enter 1 - Two players game");
-//        PrintMessage("Enter 2 - Player vs Computer");
-//    }
-
-//    private bool DetermineGameMode(string userModeChoice)
-//    {
-//        const string m_TwoPlayersChoice = "1";
-
-//        return userModeChoice.Equals(m_TwoPlayersChoice);
-//    }
-
-//    private bool askUserForReGame()
-//    {
-//        const string v_UserWantsReGame = "1";
-//        const string v_UserDontWantReGame = "2";
-
-//        PrintMessage("Do you want to play again?");
-//        PrintMessage("Enter 1 - Yes");
-//        PrintMessage("Enter 2 - No");
-
-//        string userChoice = GetUserChoice(new string[] { v_UserWantsReGame, v_UserDontWantReGame });
-
-//        return userChoice.Equals(v_UserWantsReGame);
-//    }
-
-//    private string GetUserChoice(string[] validChoices)
-//    {
-//        string userChoice;
-
-//        do
-//        {
-//            userChoice = Console.ReadLine();
-//            if (!IsValidChoice(userChoice, validChoices))
-//            {
-//                m_ErrorHandling.InvalidGameModeError();
-//            }
-//        } while (!IsValidChoice(userChoice, validChoices));
-
-//        return userChoice;
-//    }
-
-//    private bool IsValidChoice(string choice, string[] validChoices)
-//    {
-//        return validChoices.Contains(choice);
-//    }
-
-//    private void GetPlayersNames()
-//    {
-//        List<Player> players = new List<Player>();
-
-//        string firstPlayerName = null;
-//        string secondPlayerName = null ;
-
-//        firstPlayerName = GetPlayerName("Enter first player's name: ");
-
-//        if (!m_MemoryGameLogic.IsComputerVsPlayerGame) // meaing playing agaist another player 
-//        {
-//            secondPlayerName = GetPlayerName("Enter second player's name: ");
-//        }
-//        else
-//        {
-//            secondPlayerName = "Computer";
-//        }
-
-//        m_MemoryGameLogic.AddPlayersToGame(firstPlayerName, secondPlayerName);
-
-//    }
-
-//    private string GetPlayerName(string i_Message)
-//    {
-//        string playerName;
-//        do
-//        {
-//            Console.WriteLine(i_Message);
-//            playerName = Console.ReadLine();
-//            if (!IsValidName(playerName))
-//            {
-//                m_ErrorHandling.InvalidNameError();
-//            }
-
-//        } while (!IsValidName(playerName));
-
-//        return playerName;
-//    }
-
-//    private bool IsValidName(string i_Name)
-//    {
-//        // Check if the i_Name contains only letters (A-Z and a-z)
-//        // and is not empty or null
-//        if (string.IsNullOrEmpty(i_Name))
-//        {
-//            return false;
-//        }
-
-//        foreach (char c in i_Name)
-//        {
-//            if (!char.IsLetter(c))
-//            {
-//                return false;
-//            }
-//        }
-
-//        return true;
-//    }
-
-//    private void GetBoardDimentions()
-//    {
-//        int currentRowDimention;
-//        int currentColDimention;
-//        bool rowNumberIsOdd;
-
-
-//        currentRowDimention = GetBoardRows();
-//        rowNumberIsOdd = currentRowDimention % 2 != 0;
-//        currentColDimention = GetBoardCols(rowNumberIsOdd);
-
-//        while (!m_MemoryGameLogic.GetBoardDimentionsFromUser(currentRowDimention, currentColDimention))
-//        {
-//            m_ErrorHandling.InvalidOddColsError();
-
-//            currentRowDimention = GetBoardRows();
-//            rowNumberIsOdd = currentRowDimention % 2 != 0;
-//            currentColDimention = GetBoardCols(rowNumberIsOdd);
-//        }
-
-//        m_RowDimention = currentRowDimention;
-//        m_ColDimention = currentColDimention;
-//    }
-
-//    private int GetBoardRows()
-//    {
-//        while (m_GotCorrectInputFromUser)
-//        {
-//            Console.Write("Enter the number of rows (4 - 6): ");
-//            string input = Console.ReadLine();
-
-//            if (int.TryParse(input, out int rows))  // now only checks if int
-//            {
-//                if(rows >= m_MinDimention && rows <= m_MaxDimention)
-//                {
-
-//                    return rows;
-//                }
-//                else
-//                {
-//                    m_ErrorHandling.InvalidRowDimensionError();
-//                }
-//            }
-
-//            else
-//            {
-
-//                m_ErrorHandling.InvalidRowDimensionError();
-//            }
-//        }
-
-//    }
-
-//    private int GetBoardCols(bool i_RowNumberIsOdd) // now only checks if int
-//    {
-//        while (m_GotCorrectInputFromUser)
-//        {
-
-//            Console.Write(i_RowNumberIsOdd ? "Enter the number of cols (4 or 6): " : "Enter the number of cols (4 - 6): ");
-
-//            string input = Console.ReadLine();
-
-//            if (int.TryParse(input, out int cols))
-//            {
-//                if (cols >= m_MinDimention && cols <= m_MaxDimention)
-//                {
-
-//                    return cols;
-//                }
-//                else
-//                {
-//                    m_ErrorHandling.InvalidColsDimensionError();
-//                }
-//            }
-
-//            else
-//            {
-
-//                m_ErrorHandling.InvalidColsDimensionError();
-
-//            }
-//        }
-
-//    }
-
-//    private Card GetSlots(int i_CurrentRowDimention, int i_CurrentColDimention)
-//    {
-//        while(m_GotCorrectInputFromUser)
-//        {
-//            int rowSlot = GetSlotForRow(i_CurrentRowDimention);
-//            int colSlot = GetSlotForCol(i_CurrentColDimention);
-//            if(m_MemoryGameLogic.ChangeSlotWhithingDimentions(rowSlot, colSlot) == true)
-//            {
-//                return new Card(rowSlot, colSlot);
-//            }
-//            else
-//            {
-//                m_ErrorHandling.InvalidSlotOutOfDimention();
-//            }
-//        }
-//    }  
-
-//    private int GetSlotForRow(int i_CurrentRowDimention)
-//    {
-//        return GetSlot(i_CurrentRowDimention, "row");
-//    }
-
-//    private int GetSlotForCol(int i_CurrentColDimention)
-//    {
-//        return GetSlot(i_CurrentColDimention, "col");
-//    }
-
-//    private int GetSlot(int dimension, string slotType) 
-//    {
-//        while (m_GotCorrectInputFromUser)
-//        {
-
-//            if (slotType.Equals("row"))
-//            {
-//                Console.WriteLine($"Enter slot position (1-{dimension}) for {slotType}:");
-//            }
-
-//            else if (slotType.Equals("col"))
-//            {
-//                char maxColLetter = (char)('A' + dimension - 1);
-//                Console.WriteLine($"Enter slot position (A-{maxColLetter}) for {slotType}:");
-//            }
-
-//            string input = Console.ReadLine();
-
-//            if(input.Equals("Q"))
-//            {
-//                checkIfEndGameRequested(); // **exit the game // *edit* no need. just inform the big game loop that the game is finish. 
-//            }
-//            else
-//            {
-//                if (slotType.Equals("row") && int.TryParse(input, out int slot))  // this related to the logic checks..
-//                {
-//                    return slot;
-//                }
-
-//                else if (slotType.Equals("col") && IsValidColumnInput(input, dimension, out int colSlot))
-//                {
-//                    return colSlot;
-//                }
-
-//                else
-//                {
-//                    m_ErrorHandling.InvalidSlotError(dimension, slotType);
-//                }
-//            }
-
-//        }
-//    }
-
-//    private bool IsValidColumnInput(string input, int dimension, out int colSlot)
-//    {
-//        bool validInput = false;
-//        colSlot = -1;
-
-//        if (input.Length == 1 && char.IsLetter(input[0]) && char.IsUpper(input[0]))
-//        {
-//            char columnChar = input[0];
-//            colSlot = columnChar - 'A' + 1; // Convert 'A' to 1, 'B' to 2, etc.
-//            validInput = true;
-
-//        }
-//        return validInput;
-//    }
-
-//    private void PrintMessage(string message)
-//    {
-//        Console.WriteLine(message);
-//    }
-
-//    private void checkIfEndGameRequested()
-//    {
-//        Console.WriteLine("Game ended by user.");
-//        Environment.Exit(0);
-//    }
-//}
-
-
-using Ex02.ConsoleUtils;
+﻿using Ex02.ConsoleUtils;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
 
 class MemoryGameInputManager
 {
-
-    private const bool m_GotCorrectInputFromUser = true;
     private const int m_MaxDimention = 6;
     private const int m_MinDimention = 4;
     private const string k_ExitGameKey = "Q";
 
     private readonly ErrorHandling m_ErrorHandling = new ErrorHandling();
     private MemoryGameLogic m_MemoryGameLogic = new MemoryGameLogic();
-    private bool m_UserInerfaceIsOn = true;
 
-    private Card m_FirstCard, m_SecondCard;
+    private bool m_UserInerfaceIsOn = true;
+    private bool m_IsExitGameKeyPressed = false;
     private int m_RowDimention, m_ColDimention;
 
     public void PlayGame()
     {
-        SetupGame();
+        setupGame();
 
         while (m_UserInerfaceIsOn)
         {
-            PlayRounds();
-            m_UserInerfaceIsOn = askUserForReGame();
+            playRounds();
+
+            if (!m_IsExitGameKeyPressed)
+            {
+                m_UserInerfaceIsOn = askUserForReGame();
+            }
         }
 
         Screen.Clear();
     }
 
-
-    private void SetupGame()
+    private void setupGame()
     {
-        Console.WriteLine("Welcome to memory game!");
-
-        GetGameMode();
+        getGameMode();
         Console.Clear();
 
-        GetPlayersNames();
+        getPlayersNames();
         Console.Clear();
-
     }
 
-    private void PlayRounds()
+    private void playRounds()
     {
         Screen.Clear();
-        GetBoardDimentions();
+        getBoardDimentions();
 
         while (!m_MemoryGameLogic.GameIsOverStatus)
         {
@@ -608,113 +61,87 @@ class MemoryGameInputManager
             }
 
             System.Threading.Thread.Sleep(2000);
-            Screen.Clear();
         }
-
-
-        m_UserInerfaceIsOn = false;
-
-
     }
 
     private void playComputerTurn()
     {
-        bool cardsAreMatched;
 
-        //check if there is a liast with 2 cards --> true: reveald them
-        (Card card1, Card card2) = (m_MemoryGameLogic.CheckForMatchedCardsInMemoryList());
+        bool cardsAreMatched;
+        (Card card1, Card card2) = (m_MemoryGameLogic.CheckForMatchedCardsInComputerData());
 
         if (card1 == null)
         {
-            card1 = m_MemoryGameLogic.GetRandomCardFromComputer();
+            card1 = m_MemoryGameLogic.GetRandomCardForComputer();
         }
 
         m_MemoryGameLogic.FlipChosenCard(card1, true);
 
-        if (card2 == null)    // here are match
+        if (card2 == null) 
         {
             card2 = m_MemoryGameLogic.FindMatchingCard(card1);
 
-            if (card2 == null) // meaning here there is a match
+            if (card2 == null)
             {
-                card2 = m_MemoryGameLogic.GetRandomCardFromComputer();
+                card2 = m_MemoryGameLogic.GetRandomCardForComputer();
             }
-
-
         }
 
         m_MemoryGameLogic.FlipChosenCard(card2, true);
         updateGameScreen();
-
         cardsAreMatched = m_MemoryGameLogic.CheckForMatchAndUpdateAccordinly(card1, card2);
 
         if (cardsAreMatched == false)
         {
-            m_MemoryGameLogic.UpdateCardInComputerData(card1, card2);
+            m_MemoryGameLogic.UpdateCardInComputerData(cardsAreMatched, card1, card2);
         }
-
     }
-
 
     private void playHumanTurn()
     {
-        bool cardsAreMatched;
-        bool revealCard = true;
+        Card firstCard = null;
+        Card secondCard = null;
 
-        // first pick
-        (m_FirstCard) = GetVaildSlotFromUser(m_RowDimention, m_ColDimention);
-        m_MemoryGameLogic.FlipChosenCard(m_FirstCard, revealCard);
-        updateGameScreen();
+        firstCard = getVaildSlotFromUser();
+        secondCard = getVaildSlotFromUser();
 
-        // second pick
-        (m_SecondCard) = GetVaildSlotFromUser(m_RowDimention, m_ColDimention);
-        m_MemoryGameLogic.FlipChosenCard(m_SecondCard, revealCard);
-        updateGameScreen();
-
-        cardsAreMatched = m_MemoryGameLogic.CheckForMatchAndUpdateAccordinly(m_FirstCard, m_SecondCard);
-
-        if (m_MemoryGameLogic.IsComputerVsPlayerGame == true)
+        if (!m_IsExitGameKeyPressed)
         {
-            if (cardsAreMatched == false)
-            {
-                m_MemoryGameLogic.UpdateCardInComputerData(m_FirstCard, m_SecondCard);
-
-            }
-            else
-            {
-                m_MemoryGameLogic.DeleteCardsFromComputerData(m_FirstCard);
-            }
+            m_MemoryGameLogic.CheckForMatchAndUpdateAccordinly(firstCard, secondCard);
         }
-
     }
 
     private void updateGameScreen()
     {
-        string currentPlayerName;
-        int currentPlayerScore;
-
-        (currentPlayerName, currentPlayerScore) = m_MemoryGameLogic.GetCurrentPlayerInfo();
+        (string currentPlayerName, int currentPlayerScore) = m_MemoryGameLogic.GetCurrentPlayerInfo();
 
         Screen.Clear();
         Console.WriteLine($"{currentPlayerName}'s Turn");
         Console.WriteLine($"Score: {currentPlayerScore}\n");
-        DisplayBoard(m_MemoryGameLogic.GetBoardState(), m_MemoryGameLogic.GetBoardReveals());
+        displayBoard(m_MemoryGameLogic.GetBoardState(), m_MemoryGameLogic.GetBoardReveals());
     }
 
-    private Card GetVaildSlotFromUser(int i_RowDimention, int i_ColDimention)
+    private Card getVaildSlotFromUser()
     {
-        Card card = GetSlots(i_RowDimention, i_ColDimention); // UI checks that its withing dimentions of the board
+        bool revealCard = true;
+        Card card = getSlots(); 
 
-        while (!(m_MemoryGameLogic.IsValidEmptySlot(card))) // checks with the Logic if the slot is not taken already
+        while (!m_IsExitGameKeyPressed && (!m_MemoryGameLogic.IsValidEmptySlot(card)))
         {
             m_ErrorHandling.InvalidTakenSlotError();
-            card = GetSlots(i_RowDimention, i_ColDimention);
+            card = getSlots();
+        }
+
+        if(card != null)
+        {
+            m_MemoryGameLogic.FlipChosenCard(card, revealCard);
+            updateGameScreen();
         }
 
         return card;
     }
 
-    private void DisplayBoard(char[,] boardState, bool[,] boardReveals)
+    private void displayBoard(char[,] boardState, bool[,] boardReveals)
     {
         StringBuilder sb = new StringBuilder();
         sb.Append("   ");
@@ -767,12 +194,11 @@ class MemoryGameInputManager
         Console.WriteLine(sb.ToString());
     }
 
-    private void GetGameMode() // true means TwoPlayerGame, false PlayerVsComputer
+    //TO DO
+    private void getGameMode() // true means TwoPlayerGame, false PlayerVsComputer
     {
-
         const string v_UserWantsPlayerVsPlayerGame = "1";
         const string v_UserWantsPlayerVsComputerGame = "2";
-
 
         DisplayGameModeOptions();
 
@@ -785,7 +211,7 @@ class MemoryGameInputManager
 
     private void DisplayGameModeOptions()
     {
-
+        Console.WriteLine("Welcome to memory game!");
         Console.WriteLine("Enter 1 - Two players game");
         Console.WriteLine("Enter 2 - Player vs Computer");
     }
@@ -796,12 +222,15 @@ class MemoryGameInputManager
 
         return userModeChoice.Equals(m_TwoPlayersChoice);
     }
+    //###########################################
 
+    //TO DO
     private bool askUserForReGame()
     {
         const string v_UserWantsReGame = "1";
         const string v_UserDontWantReGame = "2";
         bool reGameStatus;
+
         Console.WriteLine("Do you want to play again?");
         Console.WriteLine("Enter 1 - Yes");
         Console.WriteLine("Enter 2 - No");
@@ -812,7 +241,7 @@ class MemoryGameInputManager
 
         if(reGameStatus)
         {
-            m_MemoryGameLogic.reGameSetup();
+            m_MemoryGameLogic.NewGameRoundSetup();
         }
 
         return reGameStatus;
@@ -825,32 +254,32 @@ class MemoryGameInputManager
         do
         {
             userChoice = Console.ReadLine();
-            if (!IsValidChoice(userChoice, validChoices))
+            if (!isValidChoice(userChoice, validChoices))
             {
                 m_ErrorHandling.InvalidGameModeError();
             }
-        } while (!IsValidChoice(userChoice, validChoices));
+        } while (!isValidChoice(userChoice, validChoices));
 
         return userChoice;
     }
 
-    private bool IsValidChoice(string choice, string[] validChoices)
+    //###########################
+
+    private bool isValidChoice(string choice, string[] validChoices)
     {
         return validChoices.Contains(choice);
     }
 
-    private void GetPlayersNames()
+    private void getPlayersNames()
     {
-        //List<Player> players = new List<Player>();
-
         string firstPlayerName = null;
         string secondPlayerName = null;
 
-        firstPlayerName = GetPlayerName("Enter first player's name: ");
+        firstPlayerName = getPlayerName("Enter first player's name: ");
 
         if (!m_MemoryGameLogic.IsComputerVsPlayerGame) // meaing playing agaist another player 
         {
-            secondPlayerName = GetPlayerName("Enter second player's name: ");
+            secondPlayerName = getPlayerName("Enter second player's name: ");
         }
         else
         {
@@ -858,213 +287,179 @@ class MemoryGameInputManager
         }
 
         m_MemoryGameLogic.AddPlayersToGame(firstPlayerName, secondPlayerName);
-
     }
 
-    private string GetPlayerName(string i_Message)
+    private string getPlayerName(string i_Message)
     {
-        string playerName;
-        do
+        string playerName = null;
+        bool isValidInput = false;
+
+        while(isValidInput == false)
         {
             Console.WriteLine(i_Message);
+
             playerName = Console.ReadLine();
-            if (!IsValidName(playerName))
+            isValidInput = isValidName(playerName);
+
+            if (!isValidInput)
             {
                 m_ErrorHandling.InvalidNameError();
             }
-
-        } while (!IsValidName(playerName));
+        }
 
         return playerName;
     }
 
-    private bool IsValidName(string i_Name)
+    private bool isValidName(string i_Name)
     {
-        // Check if the i_Name contains only letters (A-Z and a-z)
-        // and is not empty or null
-        if (string.IsNullOrEmpty(i_Name))
-        {
-            return false;
-        }
+        bool isValidInput = !(string.IsNullOrEmpty(i_Name));
 
-        foreach (char c in i_Name)
+        if(isValidInput == true)
         {
-            if (!char.IsLetter(c))
+            foreach (char c in i_Name)
             {
-                return false;
+                if (!char.IsLetter(c))
+                {
+                    isValidInput = false;
+                }
             }
         }
 
-        return true;
+        return isValidInput;
     }
 
-    private void GetBoardDimentions()
+    private void getBoardDimentions()
     {
-        int currentRowDimention;
-        int currentColDimention;
-        bool rowNumberIsOdd;
+        bool isValidInput = false;
 
-        // to do kfilot code
-        currentRowDimention = GetBoardRows();
-        rowNumberIsOdd = currentRowDimention % 2 != 0;
-        currentColDimention = GetBoardCols(rowNumberIsOdd);
-
-        while (!m_MemoryGameLogic.GetBoardDimentionsFromUser(currentRowDimention, currentColDimention))
+        while (isValidInput == false)
         {
-            m_ErrorHandling.InvalidOddColsError();
+            m_RowDimention = getBoardRows();
+            bool rowNumberIsOdd = m_RowDimention % 2 != 0;
+            m_ColDimention = getBoardCols(rowNumberIsOdd);
 
-            currentRowDimention = GetBoardRows();
-            rowNumberIsOdd = currentRowDimention % 2 != 0;
-            currentColDimention = GetBoardCols(rowNumberIsOdd);
+            isValidInput = m_MemoryGameLogic.GetBoardDimentionsFromUser(m_RowDimention, m_ColDimention);
+
+            if (!isValidInput)
+            {
+                m_ErrorHandling.InvalidOddColsError();
+            }
         }
-
-        m_RowDimention = currentRowDimention;
-        m_ColDimention = currentColDimention;
     }
 
-    private int GetBoardRows()
+    private int getBoardRows()
     {
-        while (m_GotCorrectInputFromUser)
+        bool isValidInput = false;
+        int row = 0;
+
+        while (isValidInput == false)
         {
             Console.Write("Enter the number of rows (4 - 6): ");
             string input = Console.ReadLine();
 
-            if (int.TryParse(input, out int rows))  // now only checks if int
+            isValidInput = int.TryParse(input, out row);
+
+            if (isValidInput)  // now only checks if int
             {
-                if (rows >= m_MinDimention && rows <= m_MaxDimention)
-                {
-
-                    return rows;
-                }
-                else
-                {
-                    m_ErrorHandling.InvalidRowDimensionError();
-                }
-            }
-
-            else
-            {
-
-                m_ErrorHandling.InvalidRowDimensionError();
+                isValidInput = (row >= m_MinDimention && row <= m_MaxDimention);
             }
         }
 
+        if (!isValidInput)
+        {
+            m_ErrorHandling.InvalidRowDimensionError();
+        }
+
+        return row;
     }
 
-    private int GetBoardCols(bool i_RowNumberIsOdd) // now only checks if int
+    private int getBoardCols(bool i_RowNumberIsOdd) // now only checks if int
     {
-        while (m_GotCorrectInputFromUser)
-        {
+        bool isValidInput = false;
+        int col = 0;
 
+        while (isValidInput == false)
+        {
             Console.Write(i_RowNumberIsOdd ? "Enter the number of cols (4 or 6): " : "Enter the number of cols (4 - 6): ");
-
             string input = Console.ReadLine();
 
-            if (int.TryParse(input, out int cols))
+            isValidInput = int.TryParse(input, out col);
+
+            if (isValidInput)  // now only checks if int
             {
-                if (cols >= m_MinDimention && cols <= m_MaxDimention)
-                {
-
-                    return cols;
-                }
-                else
-                {
-                    m_ErrorHandling.InvalidColsDimensionError();
-                }
-            }
-
-            else
-            {
-
-                m_ErrorHandling.InvalidColsDimensionError();
-
+                isValidInput = (col >= m_MinDimention && col <= m_MaxDimention);
             }
         }
 
-    }
-
-    private Card GetSlots(int i_CurrentRowDimention, int i_CurrentColDimention)
-    {
-        while (m_GotCorrectInputFromUser)
+        if (!isValidInput)
         {
-            int rowSlot = GetSlotForRow(i_CurrentRowDimention);
-            int colSlot = GetSlotForCol(i_CurrentColDimention);
-            if (m_MemoryGameLogic.ChangeSlotWhithingDimentions(rowSlot, colSlot) == true)
-            {
-                return new Card(rowSlot, colSlot);
-            }
-            else
-            {
-                m_ErrorHandling.InvalidSlotOutOfDimention();
-            }
+            m_ErrorHandling.InvalidColsDimensionError();
         }
+
+        return col;
     }
 
-    private int GetSlotForRow(int i_CurrentRowDimention)
+    private Card getSlots()
     {
+        Card card = null;
 
-        return GetSlot(i_CurrentRowDimention, "row");
-    }
-
-    private int GetSlotForCol(int i_CurrentColDimention)
-    {
-        return GetSlot(i_CurrentColDimention, "col");
-    }
-
-    private int GetSlot(int dimension, string slotType)
-    {
-        //bool isExitGameKey = false;
-
-        while (m_GotCorrectInputFromUser)
+        while (card == null && !m_IsExitGameKeyPressed)
         {
-
-            if (slotType.Equals("row"))
-            {
-                Console.WriteLine($"Enter slot position (1-{dimension}) for {slotType}:");
-            }
-
-            else if (slotType.Equals("col"))
-            {
-                char maxColLetter = (char)('A' + dimension - 1);
-                Console.WriteLine($"Enter slot position (A-{maxColLetter}) for {slotType}:");
-            }
-
-            string input = Console.ReadLine();
-            bool isExitGameKey = checkIfEndGameRequested(input);
-
-            if (!isExitGameKey)
-            {
-                if (slotType.Equals("row") && int.TryParse(input, out int slot))  // this related to the logic checks..
-                {
-                    return slot;
-                }
-
-                else if (slotType.Equals("col") && IsValidColumnInput(input, dimension, out int colSlot))
-                {
-                    return colSlot;
-                }
-
-                else
-                {
-                    m_ErrorHandling.InvalidSlotError(dimension, slotType);
-                }
-            }
+            card = getCardInput();
         }
+
+        return card;
     }
 
-    private bool IsValidColumnInput(string input, int dimension, out int colSlot)
+    private Card getCardInput()
     {
-        bool validInput = false;
-        colSlot = -1;
+        Console.WriteLine("Please choose a card to reveal");
 
-        if (input.Length == 1 && char.IsLetter(input[0]) && char.IsUpper(input[0]))
+        string cardInput = Console.ReadLine();
+        bool isValidInput = checkIfEndGameRequested(cardInput) ? false : isSlotInputValid(cardInput);
+        Card card = null;
+
+        if (!m_IsExitGameKeyPressed && isValidInput)
         {
-            char columnChar = input[0];
-            colSlot = columnChar - 'A' + 1; // Convert 'A' to 1, 'B' to 2, etc.
-            validInput = true;
+            int row = int.Parse(cardInput[1].ToString());
+            int col = cardInput[0] - 'A' + 1;
 
+            if (isValidSlotBoundries(row, col))
+            {
+                card = new Card(row, col);
+            }
         }
-        return validInput;
+
+        return card;
+    }
+
+    private bool isValidSlotBoundries(int i_Row, int i_Col)
+    {
+        bool isValidInput = (i_Row <= m_RowDimention && i_Row >= 1) && (i_Col <= m_ColDimention && i_Col >= 1);
+
+        if (!isValidInput)
+        {
+            m_ErrorHandling.InvalidSlotOutOfDimention();
+        }
+
+        return isValidInput;
+    }
+
+    private bool isSlotInputValid(string i_Input)
+    {
+        bool isValidInput = i_Input.Length == 2;
+
+        if (isValidInput)
+        {
+            isValidInput = char.IsLetter(i_Input[0]) && char.IsDigit(i_Input[1]);
+        }
+
+        if (!isValidInput)
+        {
+            m_ErrorHandling.InvalidSlotError(m_RowDimention, m_ColDimention);
+        }
+
+        return isValidInput;
     }
 
     private bool checkIfEndGameRequested(string i_Input)
@@ -1075,10 +470,10 @@ class MemoryGameInputManager
         {
             Console.WriteLine("Game ended by user.");
             m_UserInerfaceIsOn = false;
+            m_IsExitGameKeyPressed = true;
             m_MemoryGameLogic.GameIsOverStatus = true;
         }
 
         return isExitGameKey;
-        //Environment.Exit(0);
     }
 }

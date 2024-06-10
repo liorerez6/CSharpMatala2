@@ -20,6 +20,7 @@ class Player
         {
             m_RevealedCards = new Dictionary<char, List<Card>>();
         }
+
     }
 
     public Card SearchForAMatchingCard(char i_Key)
@@ -56,7 +57,6 @@ class Player
             {
                 var card1 = card.Value[0];
                 var card2 = card.Value[1];
-
                 (firstCard, secondCard) = (card1, card2);
             }
         }
@@ -106,7 +106,6 @@ class Player
         {
             m_RevealedCards[i_CardKey].Add(i_Card);
         }
-
     }
 
     public void UpdateCardsInDictionary(Card i_Card1, Card i_Card2, char i_FirstCardKey, char i_SecondCardKey)

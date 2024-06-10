@@ -6,12 +6,9 @@ class Program
 
     public static void Main()
     {
-
         MemoryGameInputManager inputManger = new MemoryGameInputManager();
 
-        inputManger.PlayGame();
-
-              
+        inputManger.PlayGame();            
     }
 
 }

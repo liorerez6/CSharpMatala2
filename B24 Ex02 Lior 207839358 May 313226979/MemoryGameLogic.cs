@@ -3,6 +3,8 @@ using System.Collections.Generic;
 
 public class MemoryGameLogic
 {
+    private const int k_FirstPlayer = 0;
+    private const int k_SecondPlayer = 1;
 
     private List<Player> m_Players;
     private Board m_Board;
@@ -13,20 +15,17 @@ public class MemoryGameLogic
     public MemoryGameLogic()
     {
         m_Players = new List<Player>();
-        m_Players.Capacity = 2;  // in this game only 2 players are allowed
+        m_Players.Capacity = 2;
         m_NumberOfTurns = 0;
         m_GameIsOver = false;
     }
 
-    public void reGameSetup()
+    public void NewGameRoundSetup()
     {
-        const int v_FirstPlayer = 0;
-        const int v_SecondPlayer = 1;
-
         m_GameIsOver = false;
         m_NumberOfTurns = 0;
-        m_Players[v_FirstPlayer].InitilizeScore();
-        m_Players[v_SecondPlayer].InitilizeScore();
+        m_Players[k_FirstPlayer].InitilizeScore();
+        m_Players[k_SecondPlayer].InitilizeScore();
     }
 
     public bool GameIsOverStatus
@@ -58,40 +57,31 @@ public class MemoryGameLogic
 
     public void AddPlayersToGame(string i_FirstName, string i_SecondName)
     {
-        bool i_HumanIsPlaying = true;
+        bool v_HumanIsPlaying = true;
 
-        addPlayerToGame(i_FirstName, i_HumanIsPlaying);
+        addPlayerToGame(i_FirstName, v_HumanIsPlaying);
 
-        if (m_IsComputerPlayerGame == true)
-        {
-            i_HumanIsPlaying = false;
-        }
-        
-        addPlayerToGame(i_SecondName, i_HumanIsPlaying);
-
+        v_HumanIsPlaying = (m_IsComputerPlayerGame == true);
+        addPlayerToGame(i_SecondName, !v_HumanIsPlaying);
     }
 
     public bool GetBoardDimentionsFromUser(int i_Row, int i_Col)
     {
+        bool validDimentionsForBoard = Board.CheckIfCanCreateBoardWithDimentions(i_Row, i_Col);
 
-        bool validDimentionsForBoard = true;
-
-        if(Board.CheckIfCanCreateBoardWithDimentions(i_Row,i_Col))
+        if(validDimentionsForBoard)
         {
-            m_Board = new Board(i_Row, i_Col);
-            
+            m_Board = new Board(i_Row, i_Col);    
         }
-        else
-        {
-            validDimentionsForBoard = false;
-        }
-
+  
         return validDimentionsForBoard;
     }
 
-    private bool IsGameOver() 
-    {  
-        return m_Board.IsBoardFull();
+    private bool isGameOver() 
+    {
+        m_GameIsOver = m_Board.IsBoardFull();
+
+        return m_GameIsOver;
     }
 
     public bool IsValidEmptySlot(Card i_Card)
@@ -111,76 +101,61 @@ public class MemoryGameLogic
         }
     }
 
-    public (Card, Card) CheckForMatchedCardsInMemoryList()
+    public (Card, Card) CheckForMatchedCardsInComputerData()
     {
-        const int v_FirstPlayer = 1;
-        return m_Players[v_FirstPlayer].CheckForMatchedCardsInMemoryList();
+        return m_Players[k_SecondPlayer].CheckForMatchedCardsInMemoryList();
     }
 
-    public Card GetRandomCardFromComputer()
+    public Card GetRandomCardForComputer()
     {
-        return m_Board.FindAHiddenCardInBoard(m_Players[1]);
-
+        return m_Board.FindAHiddenCardInBoard(m_Players[k_SecondPlayer]);
     }
 
     public Card FindMatchingCard(Card i_SearchForCard) 
     {
-        const int v_FirstPlayer = 1;
-        Card matchingCard = null;
         char key = m_Board.GetCharFromIndexInBoard(i_SearchForCard);
+        Card matchingCard = m_Players[k_SecondPlayer].SearchForAMatchingCard(key);
 
-
-        matchingCard = m_Players[v_FirstPlayer].SearchForAMatchingCard(key);
-        return m_Players[v_FirstPlayer].SearchForAMatchingCard(key);
- 
+        return m_Players[k_SecondPlayer].SearchForAMatchingCard(key);
     }
 
-    
-    public void UpdateCardInComputerData(Card i_FirstCard, Card i_SecondCard) 
+    public void UpdateCardInComputerData(bool isDeleteCard, Card i_FirstCard, Card i_SecondCard) 
     {
-        const int v_FirstPlayer = 1;
-        char charOfFirstCard = m_Board.GetCharFromIndexInBoard(i_FirstCard);
-        char charOfSecondCard = m_Board.GetCharFromIndexInBoard(i_SecondCard);
+        if (isDeleteCard)
+        {
+            m_Players[k_SecondPlayer].DeleteKeyFromData(m_Board.GetCharFromIndexInBoard(i_FirstCard));
+            m_Players[k_SecondPlayer].DeleteKeyFromData(m_Board.GetCharFromIndexInBoard(i_SecondCard));
+        }
+        else
+        {
+            char charOfFirstCard = m_Board.GetCharFromIndexInBoard(i_FirstCard);
+            char charOfSecondCard = m_Board.GetCharFromIndexInBoard(i_SecondCard);
 
-        m_Players[v_FirstPlayer].UpdateCardsInDictionary(i_FirstCard, i_SecondCard, charOfFirstCard, charOfSecondCard);
+            m_Players[k_SecondPlayer].UpdateCardsInDictionary(i_FirstCard, i_SecondCard, charOfFirstCard, charOfSecondCard);
+        }
     }
-
-    public void DeleteCardsFromComputerData(Card i_Card)
-    {
-        m_Players[1].DeleteKeyFromData(m_Board.GetCharFromIndexInBoard(i_Card));
-    }
-
 
     public bool CheckForMatchAndUpdateAccordinly(Card i_FirstCard, Card i_SecondCard)
     {
-        bool cardsAreMatched = true;
+        bool cardsAreMatched = m_Board.CheckIfSameCards(i_FirstCard, i_SecondCard);
 
-        if(m_Board.CheckIfSameCards(i_FirstCard, i_SecondCard))
+        if(cardsAreMatched)
         {
             m_Board.RevealedCard(i_FirstCard);
             m_Board.RevealedCard(i_SecondCard);
-
-            if (m_Players[1].HumanIsPlaying == false)
-            {
-                m_Players[1].DeleteKeyFromData(m_Board.GetCharFromIndexInBoard(i_FirstCard));
-            }
-            
-
-
-            // m_Board.ChangeCardsStateOnBoard(i_FirstCard, i_SecondCard);
             m_Players[m_NumberOfTurns % 2].IncreaseScore();
-            if(IsGameOver())
-            {
-                m_GameIsOver = true;
-            }
+            m_GameIsOver = isGameOver();
         }
-
         else
         {
             m_Board.HideCard(i_FirstCard);
             m_Board.HideCard(i_SecondCard);
             m_NumberOfTurns++;
-            cardsAreMatched = false;
+        }
+
+        if (m_Players[k_SecondPlayer].HumanIsPlaying == false)
+        {
+            UpdateCardInComputerData(cardsAreMatched, i_FirstCard, i_SecondCard);
         }
 
         return cardsAreMatched;
@@ -202,11 +177,5 @@ public class MemoryGameLogic
 
         return (currentPlayer.Name, currentPlayer.Score);
     }
-
-    public bool ChangeSlotWhithingDimentions(int i_Row, int i_Col)
-    {
-        return (i_Col <= m_Board.Col && i_Col >= 1 && i_Row <= m_Board.Row && i_Row >= 1);
-    }
-
 }
 
