@@ -31,26 +31,7 @@ class Board
 
         initilizeBoard();
     }
-
-    //Check if needed
-    ////Indixer - can choose another
-    //public char this[Card i_Card]
-    //{
-    //    get { return m_BoardState[i_Card.Row - 1, i_Card.Col - 1]; }
-    //}
-
-    ////PROPERTIES
-    //public int Row
-    //{
-    //    get { return m_Rows; }
-    //}
-
-    //public int Col
-    //{
-    //    get { return m_Columns; }
-    //}
-
-
+    
     //METHODS
 
     public char[,] GetBoardState()
@@ -218,11 +199,6 @@ class Board
         m_BoardReveals[i_SecondCard.Row - 1, i_SecondCard.Col - 1] = true;
     }
 
-    //public void HideSlot(Card i_Card)
-    //{
-    //    m_BoardReveals[i_Card.Row - 1, i_Card.Col - 1] = false;
-    //}
-
     public bool CheckIfSameCardsKey(Card i_FirstCard, Card i_SecondCard)
     {
         return (m_BoardState[i_FirstCard.Row - 1, i_FirstCard.Col - 1] == m_BoardState[i_SecondCard.Row - 1, i_SecondCard.Col - 1]);
@@ -232,53 +208,4 @@ class Board
     {
         return (m_BoardReveals[i_Card.Row - 1, i_Card.Col - 1]);
     }
-
-//    //Maybe change this logic, unrelevant to change state, can only display
-//    public void FlipSlotStateOnBoard(Card i_Card)
-//    {
-//        if (m_BoardReveals[i_Card.Row - 1, i_Card.Col - 1] == true)
-//        {
-//            m_BoardReveals[i_Card.Row - 1, i_Card.Col - 1] = false;
-//        }
-//        else
-//        {
-//            m_BoardReveals[i_Card.Row - 1, i_Card.Col - 1] = true;
-//        }
-//    }
-
-//    public void UpdateRevealdSlots(Card i_FirstCard, Card i_SecondCard)
-//    {
-//        m_BoardReveals[i_FirstCard.Row - 1, i_FirstCard.Col - 1] = true;
-//        m_BoardReveals[i_SecondCard.Row - 1, i_SecondCard.Col - 1] = true;
-//    }
 }
-
-//CONSOLE!!!
-//public void DisplayRequestedSlot(Slot i_Card)
-//{
-//    Console.SetCursorPosition((i_Card.Col * m_ColSlotDiff) - 1, i_Card.Row * m_RowSlotDiff);
-//    Console.Write(m_BoardState[i_Card.Row - 1, i_Card.Col - 1]);
-//    Console.SetCursorPosition(0, 0);
-//}
-
-
-//public static bool CheckIfCanCreateBoardWithDimentions(int i_Row, int i_Col)
-//{
-//    bool validBoardDimention = true;
-//    bool rowNumberIsOdd = (i_Row % 2 == 1);
-
-//    if ((i_Col % 2 == 1) && (rowNumberIsOdd == true))
-//    {
-//        validBoardDimention = false;
-//    }
-
-//    return validBoardDimention; // needs to explain each error of input (maybe enum)
-//}
-
-
-//private void initilizeBoard()
-//{
-//    m_Letters = generatePairsOfLetters();
-//    shuffleChars(m_Letters);
-//    fillBoardInChar(m_Letters);
-//}
