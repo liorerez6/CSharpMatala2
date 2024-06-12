@@ -10,19 +10,10 @@ public class MemoryGameLogic
 
     //Variables
     private bool m_IsGameOver;
-    private int m_CurrentPlayer;                //NEW
+    private int m_CurrentPlayer;                
     private bool m_IsComputerPlayerGameMode;
     private Board m_Board;
-
     private List<Player> m_Players;
-    //NEW:consider those:
-    //private Player m_FisrtPlayer = null;
-    //private Player m_SecondPlayer = null;
-
-    //Maybe should delete
-    //private int m_NumberOfTurns;
-
-    //##########################################################
 
     //CTOR
     public MemoryGameLogic()
@@ -74,41 +65,6 @@ public class MemoryGameLogic
 
         return (card1, card2);
     }
-
-        //OLD
-        //if (m_CurrentPlayer == k_FirstPlayer)
-        //{
-        //    playerEarnedAnotherRound = playHumanPlayerTurn(i_FisrtSlot, i_SecondSlot);
-
-        //    if (m_IsComputerPlayerGameMode)
-        //    {
-        //        //If human player earned another round- than delete cards from memory
-        //        if (!playerEarnedAnotherRound)
-        //        {
-        //            updateComputerDataBoard(!playerEarnedAnotherRound, i_FisrtSlot, i_SecondSlot);
-        //        }
-        //        //else save cards in memory and play computer turn
-        //        else
-        //        {
-        //            updateComputerDataBoard(playerEarnedAnotherRound, i_FisrtSlot, i_SecondSlot);
-        //            (card1, card2) = m_IsComputerPlayerGameMode ? playComputerPlayerTurn() : (null, null);
-
-        //        }
-        //        //either way update current player
-        //        m_CurrentPlayer = k_SecondPlayer;
-        //    }
-        //}
-        //else /*if(m_CurrentPlayer == k_SecondPlayer && !m_IsComputerPlayerGameMode)*/
-        //{
-        //    playerEarnedAnotherRound = playHumanPlayerTurn(i_FisrtSlot, i_SecondSlot);
-        //}
-
-        //if(playerEarnedAnotherRound == true)
-        //{
-        //    m_CurrentPlayer = (m_CurrentPlayer == k_SecondPlayer) ? k_FirstPlayer : k_SecondPlayer;
-        //}
-
-        //return (card1, card2);
   
     private bool playHumanPlayerTurn(Card i_FisrtSlot, Card i_SecondSlot)
     {
@@ -124,21 +80,6 @@ public class MemoryGameLogic
 
     private (Card, Card) playComputerPlayerTurn()
     {
-        ////check if there matched cards in memory, if so- get them
-        //(Card card1, Card card2) = m_Players[k_SecondPlayer].SearchForMatchedCardsInComuterMemory(); 
-
-        ////if didn't find mathced cards-> both are null-> find a random card1 that wasn't revealed yet
-        //if(card1 == null)
-        //{
-        //    card1 = m_Board.FindNeverRevealdCardInBoard(m_Players[k_SecondPlayer]);
-        //    card2 = searchForSameKeyCardInComputerData(card1);
-
-        //    //if didn't find a match for card1, get another random card
-        //    if (card2 == null)
-        //    {
-        //        card2 = getRandomCardForomputer();
-        //    }
-        //}
         (Card card1, Card card2) = (null, null);
         (card1, card2) = getTwoCardsForComputerPlayer();
 
@@ -235,21 +176,7 @@ public class MemoryGameLogic
     {
         return m_Board.GetBoardReveals();
     }
-
-    //public bool ChangeSlotWhithingDimentions(int i_Row, int i_Col)
-    //{
-    //    return (i_Col <= m_Board.Col && i_Col >= 1 && i_Row <= m_Board.Row && i_Row >= 1);
-    //}
-
-
-
-
-    //private (Card, Card) checkForMatchedCardsInMemoryList()
-    //{
-    //    const int v_FirstPlayer = 1;
-    //    return m_Players[v_FirstPlayer].SearchForMatchedCardsInComuterMemory();
-    //}
-
+    
     private Card getRandomCardForomputer()
     {
         return m_Board.FindNeverRevealdCardInBoard(m_Players[k_SecondPlayer]);
@@ -287,5 +214,4 @@ public class MemoryGameLogic
         m_Players.Add(player1);
         m_Players.Add(player2);
     }
-
 }
