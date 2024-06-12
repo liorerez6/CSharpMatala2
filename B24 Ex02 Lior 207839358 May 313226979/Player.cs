@@ -9,12 +9,7 @@ class Player
     private readonly string r_Name;
     private int m_Score;
     private Dictionary<char, List<Card>> m_ComputerDataForRevealedSlots = null;
-
-    //DELETE?
-    //private bool m_IsHumanPlayer;            
-
-    //#############################
-
+    
     //CTOR
     public Player(string i_Name, bool i_IsPlayerVSComputerMode)
     {
@@ -87,14 +82,6 @@ class Player
         
         if (m_ComputerDataForRevealedSlots.ContainsKey(i_Key))
         {
-            //foreach(Slot slot in m_ComputerDataForRevealedSlots[i_Key])
-            //{
-            //    cardInMemory = i_SearchForCard.IsEqualToSlot(slot);
-            //    if (cardInMemory == true)
-            //    {
-            //        break;
-            //    }
-            //}
             cardInMemory =  m_ComputerDataForRevealedSlots[i_Key].Any(card => card.Row == i_SearchForCard.Row && card.Col == i_SearchForCard.Col);
         }
 
@@ -130,29 +117,5 @@ class Player
             m_ComputerDataForRevealedSlots[i_CardKey].Add(i_Card);
         }
     }
-
-    //TO DELETE
-    //public void UpdateCardInDictionary(Slot i_Card1, Slot i_Card2, char i_FirstCardKey, char i_SecondCardKey)
-    //{
-    //    if (!m_ComputerDataForRevealedSlots.ContainsKey(i_FirstCardKey))
-    //    {
-    //        m_ComputerDataForRevealedSlots[i_FirstCardKey] = new List<Slot>();
-    //    }
-
-    //    if (!m_ComputerDataForRevealedSlots.ContainsKey(i_SecondCardKey))
-    //    {
-    //        m_ComputerDataForRevealedSlots[i_SecondCardKey] = new List<Slot>();
-    //    }
-
-    //    if (!m_ComputerDataForRevealedSlots[i_FirstCardKey].Contains(i_Card1))
-    //    {
-    //        m_ComputerDataForRevealedSlots[i_FirstCardKey].Add(i_Card1);
-    //    }
-
-    //    if (!m_ComputerDataForRevealedSlots[i_SecondCardKey].Contains(i_Card2))
-    //    {
-    //        m_ComputerDataForRevealedSlots[i_SecondCardKey].Add(i_Card2);
-    //    }
-    //}
 }
 
