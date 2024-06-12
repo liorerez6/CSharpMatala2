@@ -476,4 +476,118 @@ class MemoryGameInputManager
 
         return isExitGameKey;
     }
+
+    //CHECK
+    private void getAndSetGameMode()
+    {
+        const string v_TwoPlayerGameModeChoise = "1";
+        const string v_CompuerPlayerGameModeChoise = "2";
+        bool isValidInput = true;
+
+        while (!isValidInput)
+        {
+            m_MessagesForUser.DisplayFirstGameMenuOptions();
+            string userChoiseInput = Console.ReadLine();
+
+            switch (userChoiseInput)
+            {
+                case v_TwoPlayerGameModeChoise:
+                    setGameModeForTwoHumanPlayers();
+                    isValidInput = true;
+                    break;
+                case v_CompuerPlayerGameModeChoise:
+                    setGameModeForHumanPlayerAndComputer();
+                    isValidInput = true;
+                    break;
+                default:
+                    m_MessagesForUser.InvalidGameModeError();
+                    break;
+            }
+        }
+
+        Console.Clear();
+    }
+
+    private void runGameRound()
+    {
+        //Board gameBoard = new Board();        maybe should be here, and each round create a new one
+
+        getBoardDimentions();
+
+        while (m_UserInerfaceIsOn)
+        {
+            updateGameScreen();
+
+            Card fisrtCard = getCardInputFromPlayerAndDisplay();
+            Card secondCard = getCardInputFromPlayerAndDisplay();
+            System.Threading.Thread.Sleep(2000);
+
+            (Card returnCard1, Card returnCard2) = m_MemoryGameLogic.PlayGameLogic(fisrtCard, secondCard);
+
+            if (returnCard1 != null && returnCard2 != null)
+            {
+                updateGameScreen();
+                displayRequestedCard(returnCard1, Console.CursorLeft, Console.CursorTop);
+                displayRequestedCard(returnCard2, Console.CursorLeft, Console.CursorTop);
+                System.Threading.Thread.Sleep(2000);
+            }
+
+            m_UserInerfaceIsOn = !m_MemoryGameLogic.IsGameIsOver;
+        }
+    }
+
+    private bool userRequestAnotherRound()
+    {
+        string userChoice = null;
+        bool newRoundIsRequested = false;
+
+        while (userChoice == null)
+        {
+            m_MessagesForUser.DisplayAnotherRoundMenuOptions();
+            userChoice = Console.ReadLine();
+
+            switch (userChoice)
+            {
+                case "1":
+                    newRoundIsRequested = true;
+                    break;
+                case "2":
+                    newRoundIsRequested = false;
+                    m_UserInerfaceIsOn = false;
+                    break;
+                default:
+                    m_MessagesForUser.InvalidGameModeError();
+                    userChoice = null;
+                    break;
+            }
+        }
+
+        return newRoundIsRequested;
+    }
+
+    private void setGameModeForHumanPlayerAndComputer()
+    {
+        string firstPlayerName = getPlayerName("first");
+
+        m_MemoryGameLogic.InitializePlayers(firstPlayerName, "Computer", k_IsComputerVsPlayerGame);
+    }
+
+    private void setGameModeForTwoHumanPlayers()
+    {
+        string firstPlayerName = getPlayerName("first");
+        string secondPlayerName = getPlayerName("second");
+
+        m_MemoryGameLogic.InitializePlayers(firstPlayerName, secondPlayerName, !k_IsComputerVsPlayerGame);
+    }
+
+    private void displayRequestedCard(Card i_Card, int i_PreviousCursorLeft, int i_PreviousCursorTop)
+    {
+        const int v_ColSlotDiff = 4;
+        const int v_RowSlotDiff = 2;
+
+        char slotKey = m_MemoryGameLogic.GetCardKeyRequseted(i_Card);
+
+        Console.SetCursorPosition((i_Card.Col * v_ColSlotDiff) - 1, i_Card.Row * v_RowSlotDiff);
+        Console.Write(slotKey);
+        Console.SetCursorPosition(i_PreviousCursorLeft, i_PreviousCursorTop);
 }
